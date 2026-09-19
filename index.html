@@ -233,6 +233,11 @@
         document.getElementById('resMonthlyNet').innerText = monthlyNet.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
     }
 </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
 
 </body>
 </html>
