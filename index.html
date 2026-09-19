@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ticari Rota & Kâr Paneli</title>
+    <style>
+        :root {
+            --primary-color: #1e3799;
+            --accent-color: #27ae60;
+            --bg-color: #f1f2f6;
+            --card-bg: #ffffff;
+            --text-color: #2f3640;
+            --border-color: #b2bec3;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 14px;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+        .header h2 {
+            margin: 0 0 4px 0;
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+        .header p {
+            margin: 0;
+            color: #718093;
+            font-size: 0.8rem;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary-color);
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background-color: #fff;
+            color: var(--text-color);
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 55, 153, 0.1);
+        }
+        .kdv-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .kdv-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: normal;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        .kdv-checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: var(--primary-color);
+        }
+        .result-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 14px;
+            box-sizing: border-box;
+        }
+        .result-box h3 {
+            margin: 0 0 8px 0;
+            color: var(--primary-color);
+            font-size: 1rem;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        .result-row:last-child {
+            margin-bottom: 0;
+            padding-top: 6px;
+            border-top: 1px dashed var(--border-color);
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--accent-color);
+        }
+        .val {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>🚐 Ticari Rota & Kâr Paneli</h2>
+        <p>Esnaf ve Ticari Araç Sürücüleri İçin Profesyonel Hesaplama Aracı</p>
+    </div>
+
+    <div class="form-group">
+        <label for="vehicleSelect">Araç Marka ve Modeli:</label>
+        <select id="vehicleSelect" onchange="updateVehicleDefaults()">
+            <option value="custom">Özel / Diğer Araç</option>
+            <option value="jumper" selected>Citroën Jumper (10L / 100km)</option>
+            <option value="vito">Mercedes-Benz Vito (8.5L / 100km)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="consumption">100 km'deki Yakıt Tüketimi (Litre):</label>
+        <input type="number" id="consumption" value="10.0" step="0.1" inputmode="decimal" oninput="calculate()">
+    </div>
+
+    <div class="form-group">
+        <label for="dailyKm">Günlük Yapılan Kilometre (km):</label>
+        <input type="number" id="dailyKm" placeholder="Örn: 150" inputmode="numeric" oninput="calculate()">
+    </div>
+
+    <div class="form-group">
+        <label for="fuelPrice">Güncel Yakıt Litre Fiyatı (TL):</label>
+        <input type="number" id="fuelPrice" placeholder="Örn: 45.50" step="0.01" inputmode="decimal" oninput="calculate()">
+    </div>
+
+    <div class="form-group">
+        <label for="dailyRevenue">Günlük Ciro (TL):</label>
+        <input type="number" id="dailyRevenue" placeholder="Örn: 7000" step="0.01" inputmode="decimal" oninput="calculate()">
+    </div>
+
+    <div class="form-group">
+        <div class="kdv-row">
+            <label class="kdv-checkbox-label">
+                <input type="checkbox" id="kdvInc" onchange="calculate()"> + % KDV Dahil Et
+            </label>
+            <input type="number" id="kdvRate" value="10" inputmode="numeric" oninput="calculate()" style="width: 70px; text-align: center;">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="workDays">Aylık Çalışma Günü:</label>
+        <input type="number" id="workDays" value="26" inputmode="numeric" oninput="calculate()">
+    </div>
+
+    <div class="result-box">
+        <h3>Hesaplama Sonucu</h3>
+        <div class="result-row">
+            <span>Günlük Yakıt Gideri:</span>
+            <span class="val" id="resFuel">0,00 TL</span>
+        </div>
+        <div class="result-row">
+            <span>Günlük Net Kâr:</span>
+            <span class="val" id="resDailyNet">0,00 TL</span>
+        </div>
+        <div class="result-row">
+            <span>Aylık Toplam Net Kâr:</span>
+            <span class="val" id="resMonthlyNet">0,00 TL</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateVehicleDefaults() {
+        const val = document.getElementById('vehicleSelect').value;
+        const consInput = document.getElementById('consumption');
+        if (val === 'jumper') {
+            consInput.value = '10.0';
+        } else if (val === 'vito') {
+            consInput.value = '8.5';
+        }
+        calculate();
+    }
+
+    function calculate() {
+        const consumption = parseFloat(document.getElementById('consumption').value) || 0;
+        const dailyKm = parseFloat(document.getElementById('dailyKm').value) || 0;
+        const fuelPrice = parseFloat(document.getElementById('fuelPrice').value) || 0;
+        let dailyRev = parseFloat(document.getElementById('dailyRevenue').value) || 0;
+        const workDays = parseFloat(document.getElementById('workDays').value) || 0;
+        
+        const kdvInc = document.getElementById('kdvInc').checked;
+        const kdvRate = parseFloat(document.getElementById('kdvRate').value) || 0;
+
+        if (kdvInc && kdvRate > 0) {
+            dailyRev = dailyRev / (1 + (kdvRate / 100));
+        }
+
+        const dailyFuelCost = (dailyKm / 100) * consumption * fuelPrice;
+        const dailyNet = dailyRev - dailyFuelCost;
+        const monthlyNet = dailyNet * workDays;
+
+        document.getElementById('resFuel').innerText = dailyFuelCost.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
+        document.getElementById('resDailyNet').innerText = dailyNet.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
+        document.getElementById('resMonthlyNet').innerText = monthlyNet.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
+    }
+</script>
+
+</body>
+</html>
