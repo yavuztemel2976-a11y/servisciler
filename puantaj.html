@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puantaj Modülü</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; padding: 15px; display: flex; justify-content: center; }
+        .container { background: #ffffff; width: 100%; max-width: 430px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 20px; }
+        h2 { text-align: center; margin-bottom: 20px; color: #1e293b; font-size: 20px; }
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .day-btn { aspect-ratio: 1; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; font-size: 14px; font-weight: bold; color: #334155; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .day-btn.active { background: #16a34a; color: #fff; border-color: #16a34a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Aylık Puantaj</h2>
+        <div class="days-grid" id="grid"></div>
+    </div>
+    <script>
+        const grid = document.getElementById('grid');
+        for (let i = 1; i <= 31; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'day-btn';
+            btn.innerText = i;
+            const saved = localStorage.getItem('gun_' + i);
+            if (saved === '1') btn.classList.add('active');
+            btn.onclick = () => {
+                btn.classList.toggle('active');
+                localStorage.setItem('gun_' + i, btn.classList.contains('active') ? '1' : '0');
+            };
+            grid.appendChild(btn);
+        }
+    </script>
+</body>
+</html>
+
