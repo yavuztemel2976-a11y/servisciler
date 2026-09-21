@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticari Rota & Kâr Paneli</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a365d">
+    <link rel="apple-touch-icon" href="icon.png">
     <style>
         * {
             box-sizing: border-box;
@@ -12,31 +15,30 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         body {
-            background-color: #f8fafc;
-            color: #1e293b;
-            padding: 16px;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 15px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
         }
         .container {
+            background: #ffffff;
             width: 100%;
             max-width: 480px;
-            background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             padding: 24px;
-            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
         }
         .header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         .header h1 {
-            font-size: 20px;
+            font-size: 22px;
             color: #1e3a8a;
-            font-weight: 700;
             margin-bottom: 4px;
         }
         .header p {
@@ -53,67 +55,58 @@
             color: #334155;
             margin-bottom: 6px;
         }
-        select, input[type="number"], input[type="text"] {
+        select, input[type="number"] {
             width: 100%;
-            padding: 12px 14px;
-            font-size: 14px;
+            padding: 12px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
+            font-size: 15px;
             background-color: #fff;
-            color: #0f172a;
-            transition: all 0.2s ease;
+            color: #1e293b;
+            transition: border-color 0.2s;
         }
-        select:focus, input:focus {
+        select:focus, input[type="number"]:focus {
             outline: none;
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        .row-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .checkbox-row {
+        .kdv-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             background: #f8fafc;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            padding: 10px 14px;
-            margin-bottom: 16px;
+            padding: 10px 12px;
         }
-        .checkbox-label {
+        .checkbox-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13px;
+            gap: 8px;
+            font-size: 14px;
             font-weight: 600;
             color: #334155;
             cursor: pointer;
-            margin-bottom: 0;
         }
-        .checkbox-label input {
+        .checkbox-container input {
             width: 18px;
             height: 18px;
             accent-color: #2563eb;
             cursor: pointer;
         }
-        .small-input-wrapper {
-            width: 70px;
-        }
-        .small-input-wrapper input {
-            padding: 8px;
+        .kdv-input {
+            width: 70px !important;
+            padding: 8px !important;
             text-align: center;
             font-weight: 600;
         }
         .result-box {
-            margin-top: 24px;
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
-            border-left: 4px solid #16a34a;
+            border-left: 5px solid #22c55e;
             border-radius: 12px;
             padding: 16px;
+            margin-top: 24px;
         }
         .result-title {
             font-size: 15px;
@@ -121,21 +114,21 @@
             color: #166534;
             margin-bottom: 12px;
         }
-        .result-item {
+        .result-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             font-size: 14px;
             margin-bottom: 8px;
-            color: #1f2937;
+            color: #334155;
         }
-        .result-item.total {
-            border-top: 1px dashed #bbf7d0;
-            padding-top: 10px;
-            margin-top: 10px;
-            font-weight: 700;
-            color: #14532d;
+        .result-row.total {
             font-size: 16px;
+            font-weight: 700;
+            color: #15803d;
+            border-top: 1px dashed #bbf7d0;
+            padding-top: 8px;
+            margin-top: 8px;
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -147,70 +140,63 @@
         <p>Esnaf ve Ticari Araç Sürücüleri İçin Profesyonel Hesaplama Aracı</p>
     </div>
 
+    <!-- 1. Araç Marka ve Modeli -->
     <div class="form-group">
         <label for="vehicleSelect">Araç Marka ve Modeli:</label>
-        <select id="vehicleSelect" onchange="updateVehicleDefaults()">
-            <option value="jumper_new">Citroën Jumper (2025 - Yeni Nesil / 9.5L)</option>
-            <option value="jumper_old">Citroën Jumper (Eski Kasa / 11.0L)</option>
-            <option value="sprinter_new">Mercedes-Benz Sprinter (2025 - Yeni Nesil / 10.0L)</option>
-            <option value="sprinter_old">Mercedes-Benz Sprinter (Eski Kasa / 12.0L)</option>
-            <option value="ducato_new">Fiat Ducato (2025 - Yeni Nesil / 9.5L)</option>
-            <option value="custom">Özel Yakıt Tüketimi Gir</option>
+        <select id="vehicleSelect" onchange="calculate()">
+            <option value="10">Citroën Jumper (10L / 100km)</option>
+            <option value="9">Ford Transit (9L / 100km)</option>
+            <option value="11">Mercedes Sprinter (11L / 100km)</option>
+            <option value="8.5">Volkswagen Crafter (8.5L / 100km)</option>
         </select>
     </div>
 
-    <div class="form-group" id="consumptionGroup" style="display: none;">
-        <label for="customConsumption">100 km'deki Yakıt Tüketimi (Litre):</label>
-        <input type="number" id="customConsumption" value="10.0" step="0.1" oninput="calculate()">
-    </div>
-
+    <!-- 2. Günlük Yapılan Kilometre -->
     <div class="form-group">
-        <label for="dailyKm">Günlük Yapılan Kilometre (km):</label>
-        <input type="number" id="dailyKm" placeholder="Örn: 150" oninput="calculate()">
+        <label for="km">Günlük Yapılan Kilometre (km):</label>
+        <input type="number" id="km" placeholder="Örn: 150" oninput="calculate()">
     </div>
 
+    <!-- 3. Güncel Yakıt Litre Fiyatı -->
     <div class="form-group">
         <label for="fuelPrice">Güncel Yakıt Litre Fiyatı (TL):</label>
         <input type="number" id="fuelPrice" placeholder="Örn: 45.50" step="0.01" oninput="calculate()">
     </div>
 
-    <div class="row-group">
-        <div class="form-group">
-            <label for="dailyRevenue">Günlük Ciro (TL):</label>
-            <input type="number" id="dailyRevenue" placeholder="Örn: 7000" oninput="calculate()">
-        </div>
-        <div class="form-group">
-            <label for="tollFee">Otoyol / Geçiş (TL):</label>
-            <input type="number" id="tollFee" placeholder="Örn: 250" oninput="calculate()">
+    <!-- 4. Günlük Ciro -->
+    <div class="form-group">
+        <label for="revenue">Günlük Ciro (TL):</label>
+        <input type="number" id="revenue" placeholder="Örn: 7000" oninput="calculate()">
+    </div>
+
+    <!-- 5. KDV Satırı (Onayladığınız tasarımdaki gibi yan yana ve kutulu) -->
+    <div class="form-group">
+        <div class="kdv-row">
+            <label class="checkbox-container">
+                <input type="checkbox" id="applyKdv" onchange="calculate()"> + % KDV
+            </label>
+            <input type="number" id="kdvRate" class="kdv-input" value="10" oninput="calculate()">
         </div>
     </div>
 
-    <div class="checkbox-row">
-        <label class="checkbox-label">
-            <input type="checkbox" id="kdvCheck" onchange="calculate()">
-            + % KDV Dahil Et
-        </label>
-        <div class="small-input-wrapper">
-            <input type="number" id="kdvRate" value="10" oninput="calculate()">
-        </div>
-    </div>
-
+    <!-- 6. Aylık Çalışma Günü -->
     <div class="form-group">
         <label for="workDays">Aylık Çalışma Günü:</label>
         <input type="number" id="workDays" value="26" oninput="calculate()">
     </div>
 
+    <!-- Hesaplama Sonucu -->
     <div class="result-box">
         <div class="result-title">Hesaplama Sonucu</div>
-        <div class="result-item">
+        <div class="result-row">
             <span>Günlük Yakıt Gideri:</span>
             <span id="resFuelCost">0,00 TL</span>
         </div>
-        <div class="result-item">
+        <div class="result-row">
             <span>Günlük Net Kâr:</span>
             <span id="resDailyProfit">0,00 TL</span>
         </div>
-        <div class="result-item total">
+        <div class="result-row total">
             <span>Aylık Toplam Net Kâr:</span>
             <span id="resMonthlyProfit">0,00 TL</span>
         </div>
@@ -218,50 +204,25 @@
 </div>
 
 <script>
-    const consumptionRates = {
-        "jumper_new": 9.5,
-        "jumper_old": 11.0,
-        "sprinter_new": 10.0,
-        "sprinter_old": 12.0,
-        "ducato_new": 9.5,
-        "custom": 10.0
-    };
-
-    function updateVehicleDefaults() {
-        const val = document.getElementById("vehicleSelect").value;
-        const group = document.getElementById("consumptionGroup");
-        if (val === "custom") {
-            group.style.display = "block";
-        } else {
-            group.style.display = "none";
-        }
-        calculate();
-    }
-
     function calculate() {
-        const vehicle = document.getElementById("vehicleSelect").value;
-        let lPer100Km = consumptionRates[vehicle];
-        if (vehicle === "custom") {
-            lPer100Km = parseFloat(document.getElementById("customConsumption").value) || 0;
-        }
+        const vehicleSelect = document.getElementById("vehicleSelect");
+        const lPer100km = parseFloat(vehicleSelect.value) || 10;
 
-        const km = parseFloat(document.getElementById("dailyKm").value) || 0;
+        const km = parseFloat(document.getElementById("km").value) || 0;
         const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 0;
-        let revenue = parseFloat(document.getElementById("dailyRevenue").value) || 0;
-        const toll = parseFloat(document.getElementById("tollFee").value) || 0;
+        let revenue = parseFloat(document.getElementById("revenue").value) || 0;
         const workDays = parseFloat(document.getElementById("workDays").value) || 0;
 
-        const kdvChecked = document.getElementById("kdvCheck").checked;
+        const applyKdv = document.getElementById("applyKdv").checked;
         const kdvRate = parseFloat(document.getElementById("kdvRate").value) || 0;
 
         let netRevenue = revenue;
-        if (kdvChecked) {
+        if (applyKdv) {
             netRevenue = revenue / (1 + (kdvRate / 100));
         }
 
-        const dailyFuelCost = (km / 100) * lPer100Km * fuelPrice;
-        const totalDailyExpense = dailyFuelCost + toll;
-        const dailyNetProfit = netRevenue - totalDailyExpense;
+        const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
+        const dailyNetProfit = netRevenue - dailyFuelCost;
         const monthlyNetProfit = dailyNetProfit * workDays;
 
         document.getElementById("resFuelCost").innerText = dailyFuelCost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
