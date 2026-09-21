@@ -312,14 +312,20 @@
         const vehicleSelect = document.getElementById("vehicleSelect");
         let baseLPer100km = parseFloat(vehicleSelect.value) || 10;
 
-        // Model yılı tikliyse eskiye dönük yakıt farkı çarpanı (Örn: eski modeller bir miktar daha fazla yakabilir)
+        // Model yılı tikliyse yaşa göre yakıt sarfiyatı düzeltmesi
         const applyModel = document.getElementById("applyModel").checked;
-        const modelYear = parseInt(document.getElementById("modelYear")) || 2025;
+        const modelYear = parseInt(document.getElementById("modelYear").value) || 2025;
         
         let lPer100km = baseLPer100km;
-        if (applyModel && modelYear < 2015) {
-            // Örnek mantık: 2015 altı araçlar için %10 daha fazla yakıt tüketimi simülasyonu
-            lPer100km *= 1.10;
+        if (applyModel) {
+            if (modelYear <= 2000) {
+                lPer100km *= 1.25; // 2000 ve öncesi eski kasalar için %25 fazla yakıt
+            } else if (modelYear <= 2010) {
+                lPer100km *= 1.15; // 2001-2010 arası için %15 fazla yakıt
+            } else if (modelYear <= 2020) {
+                lPer100km *= 1.05; // 2011-2020 arası için %5 fazla yakıt
+            }
+            // 2020 sonrasına (örn: 2025) ek çarpan uygulanmaz, baz tüketim geçerlidir.
         }
 
         const km = parseFloat(document.getElementById("km").value) || 0;
