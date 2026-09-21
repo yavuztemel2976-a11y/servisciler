@@ -144,10 +144,10 @@
     <div class="form-group">
         <label for="vehicleSelect">Araç Marka ve Modeli:</label>
         <select id="vehicleSelect" onchange="calculate()">
-            <option value="10">Citroën Jumper (10L / 100km)</option>
-            <option value="9">Ford Transit (9L / 100km)</option>
-            <option value="11">Mercedes Sprinter (11L / 100km)</option>
-            <option value="8.5">Volkswagen Crafter (8.5L / 100km)</option>
+            <option value="10">Citroën Jumper</option>
+            <option value="9">Ford Transit</option>
+            <option value="11">Mercedes Sprinter</option>
+            <option value="8.5">Volkswagen Crafter</option>
         </select>
     </div>
 
@@ -163,19 +163,13 @@
         <input type="number" id="fuelPrice" placeholder="Örn: 45.50" step="0.01" oninput="calculate()">
     </div>
 
-    <!-- 4. Günlük Gişe / Köprü Gideri (TL) -->
-    <div class="form-group">
-        <label for="tollPrice">Günlük Gişe / Köprü Gideri (TL):</label>
-        <input type="number" id="tollPrice" placeholder="Örn: 150" oninput="calculate()">
-    </div>
-
-    <!-- 5. Günlük Ciro -->
+    <!-- 4. Günlük Ciro -->
     <div class="form-group">
         <label for="revenue">Günlük Ciro (TL):</label>
         <input type="number" id="revenue" placeholder="Örn: 7000" oninput="calculate()">
     </div>
 
-    <!-- 6. KDV Satırı (Görseldeki Gibi Kutulu) -->
+    <!-- 5. KDV Satırı -->
     <div class="form-group">
         <div class="kdv-row">
             <label class="checkbox-container">
@@ -185,7 +179,7 @@
         </div>
     </div>
 
-    <!-- 7. Aylık Çalışma Günü -->
+    <!-- 6. Aylık Çalışma Günü -->
     <div class="form-group">
         <label for="workDays">Aylık Çalışma Günü:</label>
         <input type="number" id="workDays" value="26" oninput="calculate()">
@@ -195,8 +189,8 @@
     <div class="result-box">
         <div class="result-title">Hesaplama Sonucu</div>
         <div class="result-row">
-            <span>Günlük Toplam Gider (Yakıt + Gişe):</span>
-            <span id="resTotalCost">0,00 TL</span>
+            <span>Günlük Yakıt Gideri:</span>
+            <span id="resFuelCost">0,00 TL</span>
         </div>
         <div class="result-row">
             <span>Günlük Net Kâr:</span>
@@ -216,7 +210,6 @@
 
         const km = parseFloat(document.getElementById("km").value) || 0;
         const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 0;
-        const tollPrice = parseFloat(document.getElementById("tollPrice").value) || 0;
         let revenue = parseFloat(document.getElementById("revenue").value) || 0;
         const workDays = parseFloat(document.getElementById("workDays").value) || 0;
 
@@ -229,11 +222,10 @@
         }
 
         const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
-        const dailyTotalCost = dailyFuelCost + tollPrice;
-        const dailyNetProfit = netRevenue - dailyTotalCost;
+        const dailyNetProfit = netRevenue - dailyFuelCost;
         const monthlyNetProfit = dailyNetProfit * workDays;
 
-        document.getElementById("resTotalCost").innerText = dailyTotalCost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+        document.getElementById("resFuelCost").innerText = dailyFuelCost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         document.getElementById("resDailyProfit").innerText = dailyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         document.getElementById("resMonthlyProfit").innerText = monthlyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
     }
