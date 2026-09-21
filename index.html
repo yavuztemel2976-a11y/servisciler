@@ -70,6 +70,46 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
+        .vehicle-row {
+            display: flex;
+            gap: 10px;
+        }
+        .vehicle-select-container {
+            flex: 1;
+        }
+        .model-container {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0 10px;
+            width: 145px;
+            justify-content: space-between;
+        }
+        .model-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+        }
+        .model-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+        .model-input {
+            width: 60px !important;
+            padding: 8px !important;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 6px !important;
+        }
         .fuel-row {
             display: flex;
             gap: 10px;
@@ -180,15 +220,29 @@
         <p>Esnaf ve Ticari Araç Sürücüleri İçin Profesyonel Hesaplama Aracı</p>
     </div>
 
-    <!-- 1. Araç Marka ve Modeli -->
+    <!-- 1. Araç Marka ve Modeli + Model Yılı/Özel Ayar Alanı -->
     <div class="form-group">
         <label for="vehicleSelect">Araç Marka ve Modeli:</label>
-        <select id="vehicleSelect" onchange="calculate()">
-            <option value="10">Citroën Jumper</option>
-            <option value="9">Ford Transit</option>
-            <option value="11">Mercedes Sprinter</option>
-            <option value="8.5">Volkswagen Crafter</option>
-        </select>
+        <div class="vehicle-row">
+            <div class="vehicle-select-container">
+                <select id="vehicleSelect" onchange="calculate()">
+                    <option value="10">Citroën Jumper</option>
+                    <option value="9.5">Peugeot Boxer</option>
+                    <option value="10">Fiat Ducato</option>
+                    <option value="9">Ford Transit</option>
+                    <option value="11">Mercedes Sprinter</option>
+                    <option value="8.5">Volkswagen Crafter</option>
+                    <option value="10">Renault Master</option>
+                    <option value="10.5">Iveco Daily</option>
+                </select>
+            </div>
+            <div class="model-container">
+                <label class="model-checkbox" title="Model Yılı / Özel Yakıt Çarpanı">
+                    <input type="checkbox" id="applyModel" onchange="calculate()"> Model
+                </label>
+                <input type="number" id="modelYear" class="model-input" placeholder="Yıl" value="2025" oninput="calculate()">
+            </div>
+        </div>
     </div>
 
     <!-- 2. Günlük Yapılan Kilometre -->
@@ -197,7 +251,7 @@
         <input type="number" id="km" placeholder="Örn: 150" oninput="calculate()">
     </div>
 
-    <!-- 3. Güncel Yakıt Litre Fiyatı ve Gönderdiğiniz Görseldeki Gişe/Ek Masraf Fikri -->
+    <!-- 3. Güncel Yakıt Litre Fiyatı ve Gişe Alanı -->
     <div class="form-group">
         <label for="fuelPrice">Güncel Yakıt Litre Fiyatı (TL):</label>
         <div class="fuel-row">
@@ -256,7 +310,17 @@
 <script>
     function calculate() {
         const vehicleSelect = document.getElementById("vehicleSelect");
-        const lPer100km = parseFloat(vehicleSelect.value) || 10;
+        let baseLPer100km = parseFloat(vehicleSelect.value) || 10;
+
+        // Model yılı tikliyse eskiye dönük yakıt farkı çarpanı (Örn: eski modeller bir miktar daha fazla yakabilir)
+        const applyModel = document.getElementById("applyModel").checked;
+        const modelYear = parseInt(document.getElementById("modelYear")) || 2025;
+        
+        let lPer100km = baseLPer100km;
+        if (applyModel && modelYear < 2015) {
+            // Örnek mantık: 2015 altı araçlar için %10 daha fazla yakıt tüketimi simülasyonu
+            lPer100km *= 1.10;
+        }
 
         const km = parseFloat(document.getElementById("km").value) || 0;
         const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 0;
@@ -269,13 +333,11 @@
         const applyToll = document.getElementById("applyToll").checked;
         const tollCost = parseFloat(document.getElementById("tollCost").value) || 0;
 
-        // Ciro KDV Hesabı
         let totalRevenue = revenue;
         if (applyKdv) {
             totalRevenue = revenue * (1 + (kdvRate / 100));
         }
 
-        // Yakıt ve Gişe Giderleri
         const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
         let totalDailyExpense = dailyFuelCost;
         if (applyToll) {
