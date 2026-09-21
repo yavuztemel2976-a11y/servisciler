@@ -173,7 +173,7 @@
     <div class="form-group">
         <div class="kdv-row">
             <label class="checkbox-container">
-                <input type="checkbox" id="applyKdv" onchange="calculate()"> + % KDV
+                <input type="checkbox" id="applyKdv" onchange="calculate()"> KDV Ekle (%):
             </label>
             <input type="number" id="kdvRate" class="kdv-input" value="10" oninput="calculate()">
         </div>
@@ -182,7 +182,7 @@
     <!-- 6. Aylık Çalışma Günü -->
     <div class="form-group">
         <label for="workDays">Aylık Çalışma Günü:</label>
-        <input type="number" id="workDays" value="26" oninput="calculate()">
+        <input type="number" id="workDays" value="22" oninput="calculate()">
     </div>
 
     <!-- Hesaplama Sonucu -->
@@ -216,13 +216,13 @@
         const applyKdv = document.getElementById("applyKdv").checked;
         const kdvRate = parseFloat(document.getElementById("kdvRate").value) || 0;
 
-        let netRevenue = revenue;
+        let totalRevenue = revenue;
         if (applyKdv) {
-            netRevenue = revenue / (1 + (kdvRate / 100));
+            totalRevenue = revenue * (1 + (kdvRate / 100));
         }
 
         const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
-        const dailyNetProfit = netRevenue - dailyFuelCost;
+        const dailyNetProfit = totalRevenue - dailyFuelCost;
         const monthlyNetProfit = dailyNetProfit * workDays;
 
         document.getElementById("resFuelCost").innerText = dailyFuelCost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
