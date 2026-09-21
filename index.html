@@ -169,11 +169,11 @@
         <input type="number" id="revenue" placeholder="Örn: 7000" oninput="calculate()">
     </div>
 
-    <!-- 5. KDV Satırı -->
+    <!-- 5. KDV Satırı (Tik + % + KDV Sıralaması) -->
     <div class="form-group">
         <div class="kdv-row">
             <label class="checkbox-container">
-                <input type="checkbox" id="applyKdv" onchange="calculate()"> KDV Ekle (%):
+                <input type="checkbox" id="applyKdv" onchange="calculate()"> % + KDV
             </label>
             <input type="number" id="kdvRate" class="kdv-input" value="10" oninput="calculate()">
         </div>
