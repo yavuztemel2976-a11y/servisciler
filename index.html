@@ -33,11 +33,13 @@
         <div class="form-group">
             <label>Araç Marka ve Modeli:</label>
             <select id="vehicle">
-                <option value="jumper">Citroën Jumper (16+1)</option>
-                <option value="ducato">Fiat Ducato (16+1)</option>
-                <option value="sprinter">Mercedes Sprinter (16+1)</option>
-                <option value="crafter">Volkswagen Crafter (16+1)</option>
-                <option value="transit">Ford Transit (16+1)</option>
+                <option value="jumper">Citroën Jumper</option>
+                <option value="ducato">Fiat Ducato</option>
+                <option value="master">Renault Master</option>
+                <option value="transit">Ford Transit</option>
+                <option value="sprinter">Mercedes Sprinter</option>
+                <option value="crafter">Volkswagen Crafter</option>
+                <option value="iveco">Iveco Daily</option>
                 <option value="other">Diğer Ticari Araç</option>
             </select>
         </div>
@@ -58,17 +60,16 @@
         </div>
 
         <div class="form-group">
-            <label>KDV & Çalışma Düzeni:</label>
             <div class="kdv-row">
                 <input type="checkbox" id="kdvCheck" onchange="calculate()">
-                <span>+ % KDV Dahil Et</span>
-                <input type="number" id="kdvRate" value="10" style="width: 70px; text-align: center;" oninput="calculate()">
+                <span>+ % KDV</span>
+                <input type="number" id="kdvRate" value="10" style="width: 80px; text-align: center;" oninput="calculate()">
             </div>
         </div>
 
         <div class="form-group">
             <label>Aylık Çalışma Günü:</label>
-            <input type="number" id="workDays" placeholder="Örn: 22" oninput="calculate()">
+            <input type="number" id="workDays" placeholder="Örn: 26" oninput="calculate()">
         </div>
 
         <div class="result-box">
@@ -102,17 +103,16 @@
                 dailyRevenue = dailyRevenue * (1 + kdvRate / 100);
             }
 
-            // 16+1 ticari araçlar için 100 km'de ortalama yakıt tüketimi baz katsayısı (örneğin ~10 litre)
+            // Ortalama 100 km'de ~10 litre yakıt tüketimi baz alınmıştır
             const fuelConsumptionPerKm = 0.10; 
             const dailyFuelCost = km * fuelConsumptionPerKm * fuelPrice;
             const dailyNetProfit = dailyRevenue - dailyFuelCost;
 
-            // Seçilen toplam çalışma gününe göre çarparak aylık tutarları bulma
+            // Girilen aylık çalışma gününe göre çarparak toplamları bulma
             const totalFuelCost = dailyFuelCost * workDays;
             const totalRevenue = dailyRevenue * workDays;
             const monthlyNetProfit = dailyNetProfit * workDays;
 
-            // Ekrana yazdırma
             document.getElementById('selectedDaysText').innerText = workDays;
             document.getElementById('totalFuelCost').innerText = totalFuelCost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
             document.getElementById('totalRevenueResult').innerText = totalRevenue.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
