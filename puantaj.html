@@ -3,97 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akıllı Puantaj Takip</title>
+    <title>Ticari Rota & Kâr Paneli</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #f4f6f9; color: #333; display: flex; justify-content: center; padding: 20px; }
-        .container { background: #ffffff; width: 100%; max-width: 400px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .header button { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 16px; }
-        h2 { font-size: 18px; color: #333; text-align: center; }
-        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 5px; font-weight: bold; text-align: center; font-size: 12px; color: #666; }
-        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .day-btn { aspect-ratio: 1; border: 1px solid #ddd; background: #fff; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.2s; }
-        .day-btn.empty { border: none; background: transparent; cursor: default; }
-        .day-btn.weekend { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
-        .day-btn.active { background-color: #28a745 !important; color: white !important; border-color: #1e7e34; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+        /* İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ */
+        .independent-ticker-bar {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        .ticker-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .ticker-text {
+            font-weight: 700;
+            font-size: 13px;
+            animation: pulse-fuel 1.8s infinite;
+            letter-spacing: 0.3px;
+        }
+        @keyframes pulse-fuel {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        /* /İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ */
+
+        .header {
+            text-align: center;
+            padding: 20px 20px 10px 20px;
+        }
+        .header h1 {
+            font-size: 20px;
+            color: #1a237e;
+            margin-bottom: 4px;
+        }
+        .header p {
+            font-size: 12px;
+            color: #666;
+        }
+        .form-body {
+            padding: 15px 20px 20px 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 6px;
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+        select:focus, input:focus {
+            border-color: #1a237e;
+        }
+        .checkbox-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .checkbox-box input {
+            width: 16px;
+            height: 16px;
+            accent-color: #1a237e;
+        }
+        .result-card {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .result-card h3 {
+            font-size: 15px;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .result-row.total {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1b5e20;
+            border-top: 1px dashed #a5d6a7;
+            padding-top: 8px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <button onclick="changeMonth(-1)">❮</button>
-            <h2 id="month-year-title"></h2>
-            <button onclick="changeMonth(1)">❯</button>
+
+<div class="container">
+    <!-- İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ -->
+    <div class="independent-ticker-bar">
+        <div class="ticker-content">
+            <span class="ticker-text">Güncel Motorin: 96,30 TL</span>
         </div>
-        <div class="weekdays">
-            <div>Pzt</div><div>Sal</div><div>Çar</div><div>Per</div><div>Cum</div><div>Cmt</div><div>Paz</div>
-        </div>
-        <div class="days-grid" id="grid"></div>
+    </div>
+    <!-- /İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ -->
+
+    <div class="header">
+        <h1>🚐 Ticari Rota & Kâr Paneli</h1>
+        <p>Esnaf ve Ticari Araç Sürücüleri İçin Profesyonel Hesaplama Aracı</p>
     </div>
 
-    <script>
-        const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-        let today = new Date();
-        let currentYear = today.getFullYear();
-        let currentMonth = today.getMonth();
+    <div class="form-body">
+        <div class="input-group">
+            <label>Araç Marka ve Modeli:</label>
+            <div class="input-row">
+                <select id="carModel" onchange="calculate()">
+                    <option value="10">Citroën Jumper (10 L / 100km)</option>
+                    <option value="11">Mercedes Sprinter (11 L / 100km)</option>
+                </select>
+                <label class="checkbox-box">
+                    <input type="checkbox" id="modelActive" checked> Model 2025
+                </label>
+            </div>
+        </div>
 
-        function renderCalendar() {
-            const grid = document.getElementById('grid');
-            const title = document.getElementById('month-year-title');
-            grid.innerHTML = '';
-            title.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+        <div class="input-group">
+            <label>Günlük Yapılan Kilometre (km):</label>
+            <input type="number" id="dailyKm" value="215" oninput="calculate()">
+        </div>
 
-            const firstDayIndex = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
-            const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+        <div class="input-group">
+            <label>Güncel Yakıt Litre Fiyatı (TL):</label>
+            <div class="input-row">
+                <input type="number" step="0.01" id="fuelPrice" value="96.30" oninput="calculate()">
+                <label class="checkbox-box">
+                    <input type="checkbox" id="tollActive" checked> Gişe
+                </label>
+                <input type="number" id="tollAmount" value="200" style="max-width: 90px;" oninput="calculate()">
+            </div>
+        </div>
 
-            for (let i = 0; i < firstDayIndex; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = 'day-btn empty';
-                grid.appendChild(emptyCell);
-            }
+        <div class="input-group">
+            <label>Günlük Ciro (TL):</label>
+            <input type="number" id="dailyRevenue" value="6500" oninput="calculate()">
+        </div>
 
-            for (let i = 1; i <= totalDays; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'day-btn';
-                btn.innerText = i;
+        <div class="input-group">
+            <div class="input-row" style="align-items: center;">
+                <label class="checkbox-box" style="flex: 1;">
+                    <input type="checkbox" id="kdvActive" checked onchange="calculate()"> % + KDV
+                </label>
+                <input type="number" id="kdvRate" value="10" style="flex: 1;" oninput="calculate()">
+            </div>
+        </div>
 
-                const dayOfWeek = (new Date(currentYear, currentMonth, i).getDay() + 6) % 7;
-                if (dayOfWeek === 5 || dayOfWeek === 6) {
-                    btn.classList.add('weekend');
-                }
+        <div class="input-group">
+            <label>Aylık Çalışma Günü:</label>
+            <input type="number" id="workDays" value="22" oninput="calculate()">
+        </div>
 
-                const storageKey = `attendance_${currentYear}_${currentMonth}_${i}`;
-                if (localStorage.getItem(storageKey) === '1') {
-                    btn.classList.add('active');
-                }
+        <div class="result-card">
+            <h3>Hesaplama Sonucu</h3>
+            <div class="result-row">
+                <span>Günlük Toplam Gider:</span>
+                <span id="resDailyExpense">2.270,45 TL</span>
+            </div>
+            <div class="result-row">
+                <span>Günlük Net Kâr:</span>
+                <span id="resDailyProfit">4.879,55 TL</span>
+            </div>
+            <div class="result-row total">
+                <span>Aylık Toplam Net Kâr:</span>
+                <span id="resMonthlyProfit">107.350,10 TL</span>
+            </div>
+        </div>
+    </div>
+</div>
 
-                btn.onclick = () => {
-                    btn.classList.toggle('active');
-                    if (btn.classList.contains('active')) {
-                        localStorage.setItem(storageKey, '1');
-                    } else {
-                        localStorage.removeItem(storageKey);
-                    }
-                };
+<script>
+function calculate() {
+    let baseCons = parseFloat(document.getElementById('carModel').value) || 10;
+    let km = parseFloat(document.getElementById('dailyKm').value) || 0;
+    let price = parseFloat(document.getElementById('fuelPrice').value) || 0;
+    let toll = document.getElementById('tollActive').checked ? (parseFloat(document.getElementById('tollAmount').value) || 0) : 0;
+    let revenue = parseFloat(document.getElementById('dailyRevenue').value) || 0;
+    let workDays = parseFloat(document.getElementById('workDays').value) || 22;
 
-                grid.appendChild(btn);
-            }
-        }
+    let fuelCost = (km / 100) * baseCons * price;
+    let dailyExpense = fuelCost + toll;
+    let dailyProfit = revenue - dailyExpense;
+    let monthlyProfit = dailyProfit * workDays;
 
-        function changeMonth(direction) {
-            currentMonth += direction;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            } else if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            renderCalendar();
-        }
+    document.getElementById('resDailyExpense').innerText = dailyExpense.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " TL";
+    document.getElementById('resDailyProfit').innerText = dailyProfit.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " TL";
+    document.getElementById('resMonthlyProfit').innerText = monthlyProfit.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " TL";
+}
+calculate();
+</script>
 
-        renderCalendar();
-    </script>
 </body>
 </html>
