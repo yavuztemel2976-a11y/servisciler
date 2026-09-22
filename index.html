@@ -70,46 +70,6 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        .vehicle-row {
-            display: flex;
-            gap: 10px;
-        }
-        .vehicle-select-container {
-            flex: 1;
-        }
-        .model-container {
-            display: flex;
-            align-items: center;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 0 10px;
-            width: 145px;
-            justify-content: space-between;
-        }
-        .model-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            cursor: pointer;
-        }
-        .model-checkbox input {
-            width: 18px;
-            height: 18px;
-            accent-color: #2563eb;
-            cursor: pointer;
-        }
-        .model-input {
-            width: 60px !important;
-            padding: 8px !important;
-            text-align: center;
-            font-weight: 600;
-            border: 1px solid #cbd5e1 !important;
-            border-radius: 6px !important;
-        }
         .fuel-row {
             display: flex;
             gap: 10px;
@@ -220,29 +180,19 @@
         <p>Esnaf ve Ticari Araç Sürücüleri İçin Profesyonel Hesaplama Aracı</p>
     </div>
 
-    <!-- 1. Araç Marka ve Modeli + Model Yılı/Özel Ayar Alanı -->
+    <!-- 1. Araç Marka ve Modeli -->
     <div class="form-group">
         <label for="vehicleSelect">Araç Marka ve Modeli:</label>
-        <div class="vehicle-row">
-            <div class="vehicle-select-container">
-                <select id="vehicleSelect" onchange="calculate()">
-                    <option value="10">Citroën Jumper</option>
-                    <option value="9.5">Peugeot Boxer</option>
-                    <option value="10">Fiat Ducato</option>
-                    <option value="9">Ford Transit</option>
-                    <option value="11">Mercedes Sprinter</option>
-                    <option value="8.5">Volkswagen Crafter</option>
-                    <option value="10">Renault Master</option>
-                    <option value="10.5">Iveco Daily</option>
-                </select>
-            </div>
-            <div class="model-container">
-                <label class="model-checkbox" title="Model Yılı / Özel Yakıt Çarpanı">
-                    <input type="checkbox" id="applyModel" onchange="calculate()"> Model
-                </label>
-                <input type="number" id="modelYear" class="model-input" placeholder="Yıl" value="2025" oninput="calculate()">
-            </div>
-        </div>
+        <select id="vehicleSelect" onchange="calculate()">
+            <option value="10">Citroën Jumper</option>
+            <option value="9.5">Peugeot Boxer</option>
+            <option value="10">Fiat Ducato</option>
+            <option value="9">Ford Transit</option>
+            <option value="11">Mercedes Sprinter</option>
+            <option value="8.5">Volkswagen Crafter</option>
+            <option value="10">Renault Master</option>
+            <option value="10.5">Iveco Daily</option>
+        </select>
     </div>
 
     <!-- 2. Günlük Yapılan Kilometre -->
@@ -310,23 +260,7 @@
 <script>
     function calculate() {
         const vehicleSelect = document.getElementById("vehicleSelect");
-        let baseLPer100km = parseFloat(vehicleSelect.value) || 10;
-
-        // Model yılı tikliyse yaşa göre yakıt sarfiyatı düzeltmesi
-        const applyModel = document.getElementById("applyModel").checked;
-        const modelYear = parseInt(document.getElementById("modelYear").value) || 2025;
-        
-        let lPer100km = baseLPer100km;
-        if (applyModel) {
-            if (modelYear <= 2000) {
-                lPer100km *= 1.25; // 2000 ve öncesi eski kasalar için %25 fazla yakıt
-            } else if (modelYear <= 2010) {
-                lPer100km *= 1.15; // 2001-2010 arası için %15 fazla yakıt
-            } else if (modelYear <= 2020) {
-                lPer100km *= 1.05; // 2011-2020 arası için %5 fazla yakıt
-            }
-            // 2020 sonrasına (örn: 2025) ek çarpan uygulanmaz, baz tüketim geçerlidir.
-        }
+        const lPer100km = parseFloat(vehicleSelect.value) || 10;
 
         const km = parseFloat(document.getElementById("km").value) || 0;
         const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 0;
