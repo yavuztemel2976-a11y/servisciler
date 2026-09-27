@@ -230,10 +230,13 @@
                     <option value="9.5">Peugeot Boxer</option>
                     <option value="10">Fiat Ducato</option>
                     <option value="9">Ford Transit</option>
-                    <option value="11">Mercedes Sprinter</option>
+                    <option value="11">Mercedes-Benz Sprinter</option>
                     <option value="8.5">Volkswagen Crafter</option>
+                    <option value="8">Volkswagen Transporter</option>
                     <option value="10">Renault Master</option>
+                    <option value="10">Opel Movano</option>
                     <option value="10.5">Iveco Daily</option>
+                    <option value="10.5">Hyundai H350</option>
                 </select>
             </div>
             <div class="model-container">
@@ -301,7 +304,7 @@
             <span id="resDailyProfit">0,00 TL</span>
         </div>
         <div class="result-row total">
-            <span>Aylık Total Net Kâr:</span>
+            <span>Aylık Toplam Net Kâr:</span>
             <span id="resMonthlyProfit">0,00 TL</span>
         </div>
     </div>
@@ -312,22 +315,20 @@
         const vehicleSelect = document.getElementById("vehicleSelect");
         let baseLPer100km = parseFloat(vehicleSelect.value) || 10;
 
-        // Model checkbox işaretliyse, yıllara göre profesyonel kademeli motor yakıt farkı
         const applyModel = document.getElementById("applyModel").checked;
         const modelYear = parseInt(document.getElementById("modelYear").value) || 2026;
         
         let lPer100km = baseLPer100km;
         if (applyModel) {
             if (modelYear <= 2005) {
-                lPer100km *= 1.22; // 2000-2005 eski nesil/klasik motor: %22 daha fazla yakıt
+                lPer100km *= 1.22;
             } else if (modelYear <= 2012) {
-                lPer100km *= 1.15; // 2006-2012 orta yaş kasa: %15 daha fazla yakıt
+                lPer100km *= 1.15;
             } else if (modelYear <= 2018) {
-                lPer100km *= 1.08; // 2013-2018 geçiş dönemi: %8 daha fazla yakıt
+                lPer100km *= 1.08;
             } else if (modelYear <= 2022) {
-                lPer100km *= 1.03; // 2019-2022 yeni nesil standart: %3 daha fazla yakıt
+                lPer100km *= 1.03;
             }
-            // 2023, 2025, 2026 ve üzeri sıfır / Start-Stop'lu yeni nesil araçlar baz tüketimde kalır
         }
 
         const km = parseFloat(document.getElementById("km").value) || 0;
@@ -341,13 +342,11 @@
         const applyToll = document.getElementById("applyToll").checked;
         const tollCost = parseFloat(document.getElementById("tollCost").value) || 0;
 
-        // Ciroya KDV ekleme mantığı
         let totalRevenue = revenue;
         if (applyKdv) {
             totalRevenue = revenue * (1 + (kdvRate / 100));
         }
 
-        // Günlük giderler (Yakıt + Gişe)
         const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
         let totalDailyExpense = dailyFuelCost;
         if (applyToll) {
