@@ -150,6 +150,43 @@
             border: 1px solid #cbd5e1 !important;
             border-radius: 6px !important;
         }
+        .fuel-label-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .fuel-label-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        /* Minik motorin pompası görseli (SVG) */
+        .fuel-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+        .fuel-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #2563eb;
+        }
+        .fuel-manual-toggle {
+            font-size: 11px;
+            font-weight: 500;
+            color: #2563eb;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 4px;
+            padding: 1px 6px;
+            cursor: pointer;
+        }
+        .fuel-manual-toggle:hover {
+            background: #dbeafe;
+        }
         .kdv-row {
             display: flex;
             justify-content: space-between;
@@ -261,8 +298,19 @@
 
     <!-- 3. Güncel Yakıt Litre Fiyatı ve Gişe Alanı -->
     <div class="form-group">
-        <label for="fuelPrice">Güncel Yakıt Litre Fiyatı (TL):</label>
-        <div class="fuel-row">
+        <div class="fuel-label-container">
+            <div class="fuel-label-left">
+                <!-- Minik motorin pompası vektör görseli (sol köşede) -->
+                <span class="fuel-icon" title="Motorin Pompası">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v7h-2v-7H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                </span>
+                <label for="fuelPrice" style="margin-bottom:0;">Güncel Yakıt Litre Fiyatı (TL):</label>
+            </div>
+            <span class="fuel-manual-toggle" onclick="toggleManualFuel()" id="fuelToggleBtn">Manuel</span>
+        </div>
+        <div class="fuel-row" style="margin-top: 6px;">
             <div class="fuel-input-container">
                 <input type="number" id="fuelPrice" placeholder="Örn: 45.50" step="0.01" oninput="calculate()">
             </div>
@@ -297,7 +345,7 @@
         <input type="number" id="workDays" value="26" oninput="calculate()">
     </div>
 
-    <!-- Hesaplama (4 Sıralı ve "Toplam" kelimesi tamamen çıkarılmış düzen) -->
+    <!-- Hesaplama -->
     <div class="result-box">
         <div class="result-title">Hesaplama</div>
         <div class="result-row">
@@ -370,6 +418,20 @@
         document.getElementById("resMonthlyExpense").innerText = totalMonthlyExpense.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         document.getElementById("resDailyProfit").innerText = dailyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         document.getElementById("resMonthlyProfit").innerText = monthlyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+    }
+
+    function toggleManualFuel() {
+        const fuelInput = document.getElementById("fuelPrice");
+        const toggleBtn = document.getElementById("fuelToggleBtn");
+        if (fuelInput.readOnly) {
+            fuelInput.readOnly = false;
+            fuelInput.style.backgroundColor = "#fff";
+            toggleBtn.innerText = "Manuel";
+        } else {
+            fuelInput.readOnly = true;
+            fuelInput.style.backgroundColor = "#f8fafc";
+            toggleBtn.innerText = "Kilidi Aç";
+        }
     }
 
     window.onload = calculate;
