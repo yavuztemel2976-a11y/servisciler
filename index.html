@@ -335,7 +335,7 @@
             totalRevenue = revenue * (1 + (kdvRate / 100));
         }
 
-        const fuelPrice = 43.50; // Orijinal standart yakıt birim fiyatı
+        const fuelPrice = 43.50; // Standart yakıt birim fiyatı
         const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
         let totalTotalExpense = dailyFuelCost;
         if (applyToll) {
