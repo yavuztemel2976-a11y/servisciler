@@ -31,54 +31,54 @@
             position: relative;
         }
 
-        /* SOL ÜST KÖŞE: Doğrudan Fiyat Değiştirebildiğiniz İnteraktif Alan */
+        /* NEFES ALIP SÖNEN KÜÇÜCÜK İNTERAKTİF YAKIT ROZETİ */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
         .top-left-fuel-badge {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            display: flex;
+            top: 12px;
+            left: 12px;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: #f0fdf4;
-            border: 2px solid #22c55e;
-            padding: 5px 8px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1.5px solid #22c55e;
+            padding: 3px 6px;
+            border-radius: 8px;
+            animation: pulseGlow 2s infinite;
             z-index: 10;
         }
-        .fuel-icon-circle {
-            width: 24px;
-            height: 24px;
-            background: #dcfce7;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
+        .fuel-icon {
+            font-size: 11px;
         }
         .top-left-input {
-            width: 75px;
+            width: 55px;
             border: none;
             background: transparent;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
             color: #15803d;
             outline: none;
             text-align: left;
+            padding: 0;
         }
 
         .header {
             text-align: center;
             margin-bottom: 16px;
-            margin-top: 20px;
+            margin-top: 10px; /* Başlık üst kısma taşmasın diye uygun pay */
         }
         .header h1 {
-            font-size: 22px;
+            font-size: 20px;
             color: #1e3a8a;
             margin-bottom: 4px;
         }
         .header p {
-            font-size: 13px;
+            font-size: 12px;
             color: #64748b;
         }
         .form-group {
@@ -245,9 +245,9 @@
 <body>
 
 <div class="container">
-    <!-- SOL ÜST KÖŞE: Doğrudan Fiyat Değiştirebildiğiniz İnteraktif Alan -->
+    <!-- SOL ÜST KÖŞE: Küçücük, Nefes Alan, Manuel Değiştirilebilir Yakıt Alanı -->
     <div class="top-left-fuel-badge">
-        <div class="fuel-icon-circle">⛽</div>
+        <span class="fuel-icon">⛽</span>
         <input type="number" id="fuelPrice" class="top-left-input" placeholder="93.50" step="0.01" value="93.50" oninput="calculate()">
     </div>
 
@@ -382,16 +382,16 @@
         }
 
         const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
-        let totalDailyExpense = dailyFuelCost;
+        let totalTotalExpense = dailyFuelCost;
         if (applyToll) {
-            totalDailyExpense += tollCost;
+            totalTotalExpense += tollCost;
         }
 
-        const totalMonthlyExpense = totalDailyExpense * workDays;
-        const dailyNetProfit = totalRevenue - totalDailyExpense;
+        const totalMonthlyExpense = totalTotalExpense * workDays;
+        const dailyNetProfit = totalRevenue - totalTotalExpense;
         const monthlyNetProfit = dailyNetProfit * workDays;
 
-        document.getElementById("resFuelCost").innerText = totalDailyExpense.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+        document.getElementById("resFuelCost").innerText = totalTotalExpense.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         document.getElementById("resMonthlyExpense").innerText = totalMonthlyExpense.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         document.getElementById("resDailyProfit").innerText = dailyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
         document.getElementById("resMonthlyProfit").innerText = monthlyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
