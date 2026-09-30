@@ -1,6 +1,14 @@
-<div style="display: inline-flex; align-items: center; gap: 6px; background: #fff; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
-    <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #2563eb; flex-shrink: 0;">
+<div style="display: inline-flex; align-items: center; gap: 4px; background: #fff; padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 6px;">
+    <svg viewBox="0 0 24 24" style="width: 12px; height: 12px; fill: #2563eb; flex-shrink: 0;">
         <path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v7h-2v-7H7v-2h10v2zm0-4H7V7h10v2z"/>
     </svg>
-    <input type="number" id="fuelPrice" placeholder="Motorin Fiyatı" step="0.01" style="width: 100px; border: none; outline: none; font-size: 14px; font-weight: 600; color: #1e293b; background: transparent;">
+    <input type="number" id="fuelPrice" value="93.50" step="0.01" style="width: 50px; border: none; outline: none; font-size: 11px; font-weight: 600; color: #1e293b; background: transparent; animation: blink 1.5s infinite;">
 </div>
+
+<style>
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+</style>
