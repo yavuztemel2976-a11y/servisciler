@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aylık Puantaj</title>
     <style>
         :root {
@@ -15,130 +15,112 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 12px;
+            padding: 6px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
             width: 100%;
-            max-width: 450px;
+            max-width: 420px;
             background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 10px;
             box-sizing: border-box;
         }
 
         h2 {
-            font-size: 1.15rem;
-            margin-top: 0;
-            margin-bottom: 4px;
+            font-size: 1rem;
+            margin: 0 0 2px 0;
             text-align: center;
             color: #0f172a;
         }
 
-        .subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        select, input[type="month"], input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-            background: #fff;
-        }
-
-        .company-row {
+        .top-row {
             display: flex;
             gap: 6px;
+            margin-bottom: 6px;
         }
 
-        .company-row select {
+        .top-row select, .top-row input {
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: #fff;
+            box-sizing: border-box;
+        }
+
+        .company-box {
+            flex: 1;
+            display: flex;
+            gap: 4px;
+        }
+
+        .company-box select {
             flex: 1;
         }
 
         .btn-add {
             background: #f1f5f9;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0 12px;
-            font-size: 0.85rem;
+            border-radius: 6px;
+            padding: 0 8px;
+            font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             color: var(--primary);
             white-space: nowrap;
         }
 
-        .btn-add:active {
-            background: #e2e8f0;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        .month-box {
+            width: 110px;
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin: 16px 0;
+            gap: 4px;
+            margin-bottom: 6px;
         }
 
         .stat-card {
             background: #f1f5f9;
-            border-radius: 10px;
-            padding: 8px;
+            border-radius: 6px;
+            padding: 4px;
             text-align: center;
         }
 
         .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: 700;
         }
 
         .stat-value {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--primary);
-            margin-top: 2px;
         }
 
-        /* Fatura ve Finans Panel Stili */
         .finance-card {
             background: #f8fafc;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 16px;
+            border-radius: 8px;
+            padding: 6px 8px;
+            margin-bottom: 6px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 4px;
         }
 
         .finance-row {
@@ -148,72 +130,71 @@
         }
 
         .finance-row label {
-            margin-bottom: 0;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
         .finance-row input[type="number"] {
-            width: 120px;
-            padding: 6px 8px;
-            font-size: 0.9rem;
+            width: 90px;
+            padding: 3px 6px;
+            font-size: 0.85rem;
             text-align: right;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
         }
 
-        /* KDV Satırı Tasarımı (Gönderdiğiniz görseldeki şıklıkta) */
-        .kdv-checkbox-row {
+        .kdv-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #fff;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 8px 10px;
+            border-radius: 4px;
+            padding: 2px 6px;
         }
 
         .kdv-left {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
+            gap: 6px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
-        .kdv-left input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+        .kdv-left input {
+            width: 14px;
+            height: 14px;
             accent-color: var(--primary);
             cursor: pointer;
         }
 
-        .kdv-rate-input {
-            width: 60px !important;
-            text-align: center;
-            padding: 4px !important;
-            font-size: 0.85rem !important;
+        .kdv-rate {
+            width: 45px !important;
+            text-align: center !important;
+            padding: 2px !important;
+            font-size: 0.75rem !important;
         }
 
-        /* Net Hak Ediş Vurgu Kutusu */
-        .net-earnings-box {
+        .net-box {
             background: #ecfdf5;
             border: 1px solid #a7f3d0;
-            border-radius: 10px;
-            padding: 10px 12px;
+            border-radius: 6px;
+            padding: 4px 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 4px;
         }
 
         .net-label {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 700;
             color: #065f46;
             text-transform: uppercase;
         }
 
         .net-value {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 800;
             color: #059669;
         }
@@ -221,16 +202,15 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            margin-bottom: 16px;
+            gap: 3px;
+            margin-bottom: 6px;
         }
 
         .day-header {
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
-            padding-bottom: 4px;
         }
 
         .day-header.weekend {
@@ -240,15 +220,14 @@
         .day-cell {
             background: #ffffff;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            aspect-ratio: 1;
+            border-radius: 4px;
+            aspect-ratio: 1.2;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             user-select: none;
-            transition: all 0.1s ease;
         }
 
         .day-cell.weekend-cell {
@@ -257,7 +236,7 @@
         }
 
         .day-number {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
@@ -266,8 +245,8 @@
         }
 
         .day-status {
-            font-size: 0.65rem;
-            margin-top: 2px;
+            font-size: 0.55rem;
+            margin-top: 1px;
             color: var(--text-muted);
         }
 
@@ -304,20 +283,20 @@
         .legend {
             display: flex;
             justify-content: space-around;
-            font-size: 0.75rem;
-            margin-bottom: 16px;
+            font-size: 0.65rem;
+            margin-bottom: 6px;
             color: var(--text-muted);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .legend-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
         }
 
@@ -326,16 +305,11 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 1rem;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-        }
-
-        .btn-save:active {
-            transform: scale(0.98);
         }
     </style>
 </head>
@@ -343,19 +317,13 @@
 
 <div class="container">
     <h2>Aylık Puantaj</h2>
-    <div class="subtitle">Firma Bazlı Çalışma, KDV ve Fatura Hesaplama</div>
 
-    <div class="form-group">
-        <label for="companySelect">Firma Adı:</label>
-        <div class="company-row">
+    <div class="top-row">
+        <div class="company-box">
             <select id="companySelect"></select>
-            <button type="button" class="btn-add" id="btnAddCompany">+ Yeni Firma</button>
+            <button type="button" class="btn-add" id="btnAddCompany">+ Yeni</button>
         </div>
-    </div>
-
-    <div class="form-group">
-        <label for="monthSelect">Ay Seçin:</label>
-        <input type="month" id="monthSelect">
+        <input type="month" id="monthSelect" class="month-box">
     </div>
 
     <div class="stats-grid">
@@ -364,44 +332,41 @@
             <div class="stat-value" id="countWork">0</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">İzinli / Tatil</div>
+            <div class="stat-label">Tatil</div>
             <div class="stat-value" id="countLeave">0</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Raporlu</div>
+            <div class="stat-label">Rapor</div>
             <div class="stat-value" id="countReport">0</div>
         </div>
     </div>
 
-    <!-- Fatura & Finans Hesaplama Paneli -->
     <div class="finance-card">
         <div class="finance-row">
-            <label>Günlük / Sefer Ücreti (₺):</label>
+            <label>Günlük Ciro:</label>
             <input type="number" id="dailyRateInput" placeholder="0" min="0" step="any">
         </div>
 
-        <!-- KDV Seçim Satırı -->
-        <div class="kdv-checkbox-row">
+        <div class="kdv-row">
             <div class="kdv-left">
                 <input type="checkbox" id="kdvCheck">
-                <label for="kdvCheck" style="cursor:pointer; margin:0;">% KDV Ekle</label>
+                <label for="kdvCheck" style="cursor:pointer; margin:0;">% KDV</label>
             </div>
-            <input type="number" id="kdvRateInput" class="kdv-rate-input" value="10" min="0" max="100">
+            <input type="number" id="kdvRateInput" class="kdv-rate" value="10" min="0" max="100">
         </div>
 
         <div class="finance-row">
-            <label>Firma Masraf / Kesinti (₺):</label>
+            <label>Kesinti:</label>
             <input type="number" id="deductionInput" placeholder="0" min="0" step="any">
         </div>
 
         <div class="finance-row">
-            <label>Yakıt Kesintisi (₺):</label>
+            <label>Yakıt:</label>
             <input type="number" id="fuelDeductionInput" placeholder="0" min="0" step="any">
         </div>
 
-        <!-- Net Hak Ediş -->
-        <div class="net-earnings-box">
-            <div class="net-label">Net Fatura / Hakediş</div>
+        <div class="net-box">
+            <div class="net-label">Net Tutar</div>
             <div class="net-value" id="netEarningsVal">0 ₺</div>
         </div>
     </div>
@@ -414,7 +379,7 @@
         <div class="legend-item"><span class="legend-dot" style="background: #eab308;"></span> Raporlu</div>
     </div>
 
-    <button class="btn-save" id="btnSave">Bilgileri Kaydet</button>
+    <button class="btn-save" id="btnSave">Kaydet</button>
 </div>
 
 <script>
@@ -422,8 +387,8 @@
     const stateLabels = { '': '-', 'work': 'Çalıştı', 'leave': 'Tatil', 'report': 'Rapor' };
     
     let puantajData = {}; 
-    let companyList = ['Meva Turizm'];
-    let financeData = {}; // Her firmanın mali verilerini saklar
+    let companyList = []; // Başlangıçta boş
+    let financeData = {};
 
     const companySelect = document.getElementById('companySelect');
     const btnAddCompany = document.getElementById('btnAddCompany');
@@ -446,28 +411,25 @@
     monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
     function loadData() {
-        const saved = localStorage.getItem('puantaj_verileri_v4');
-        if (saved) {
-            try { puantajData = JSON.parse(saved); } catch(e) { puantajData = {}; }
-        }
+        const saved = localStorage.getItem('puantaj_verileri_v6');
+        if (saved) { try { puantajData = JSON.parse(saved); } catch(e) {} }
         
-        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v4');
-        if (savedCompanies) {
-            try { companyList = JSON.parse(savedCompanies); } catch(e) {}
+        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v6');
+        if (savedCompanies) { try { companyList = JSON.parse(savedCompanies); } catch(e) {} }
+
+        // Eğer kayıtlı hiç firma yoksa örnek boş bırakmak yerine kullanıcı eklesin diye yönlendiriyoruz
+        if (companyList.length === 0) {
+            companyList = ['Firma Seçiniz / Ekle'];
         }
 
-        const savedFinance = localStorage.getItem('puantaj_finans_v4');
-        if (savedFinance) {
-            try { financeData = JSON.parse(savedFinance); } catch(e) { financeData = {}; }
-        }
+        const savedFinance = localStorage.getItem('puantaj_finans_v6');
+        if (savedFinance) { try { financeData = JSON.parse(savedFinance); } catch(e) {} }
 
         updateCompanyDropdown();
-
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v4');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v6');
         if (savedCompany && companyList.includes(savedCompany)) {
             companySelect.value = savedCompany;
         }
-
         updateFinanceInputs();
     }
 
@@ -480,50 +442,47 @@
             opt.textContent = comp;
             companySelect.appendChild(opt);
         });
-        if (companyList.includes(current)) {
-            companySelect.value = current;
-        }
+        if (companyList.includes(current)) companySelect.value = current;
     }
 
     function getFinanceKey() {
-        const company = companySelect.value || companyList[0];
-        const monthKey = monthSelect.value;
-        return `${monthKey}_${company}`;
+        return `${monthSelect.value}_${companySelect.value || companyList[0]}`;
     }
 
     function updateFinanceInputs() {
-        const key = getFinanceKey();
-        const data = financeData[key] || { rate: '', kdvActive: true, kdvRate: 10, deduction: '', fuel: '' };
-        
-        dailyRateInput.value = data.rate !== undefined ? data.rate : '';
-        kdvCheck.checked = data.kdvActive !== undefined ? data.kdvActive : true;
-        kdvRateInput.value = data.kdvRate !== undefined ? data.kdvRate : 10;
-        deductionInput.value = data.deduction !== undefined ? data.deduction : '';
-        fuelDeductionInput.value = data.fuel !== undefined ? data.fuel : '';
+        const data = financeData[getFinanceKey()] || { rate: '', kdvActive: true, kdvRate: 10, deduction: '', fuel: '' };
+        dailyRateInput.value = data.rate ?? '';
+        kdvCheck.checked = data.kdvActive ?? true;
+        kdvRateInput.value = data.kdvRate ?? 10;
+        deductionInput.value = data.deduction ?? '';
+        fuelDeductionInput.value = data.fuel ?? '';
     }
 
     function saveFinanceInputs() {
-        const key = getFinanceKey();
-        financeData[key] = {
+        financeData[getFinanceKey()] = {
             rate: dailyRateInput.value,
             kdvActive: kdvCheck.checked,
             kdvRate: kdvRateInput.value,
             deduction: deductionInput.value,
             fuel: fuelDeductionInput.value
         };
-        localStorage.setItem('puantaj_finans_v4', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_finans_v6', JSON.stringify(financeData));
     }
 
     btnAddCompany.addEventListener('click', () => {
-        const newComp = prompt('Yeni firma veya hat adını giriniz:');
+        const newComp = prompt('Firma adı:');
         if (newComp && newComp.trim() !== '') {
             const formatted = newComp.trim();
+            // Eğer ilk varsayılan "Firma Seçiniz / Ekle" varsa listeden çıkaralım
+            if (companyList.includes('Firma Seçiniz / Ekle')) {
+                companyList = companyList.filter(c => c !== 'Firma Seçiniz / Ekle');
+            }
             if (!companyList.includes(formatted)) {
                 companyList.push(formatted);
-                localStorage.setItem('puantaj_firma_listesi_v4', JSON.stringify(companyList));
+                localStorage.setItem('puantaj_firma_listesi_v6', JSON.stringify(companyList));
             }
             updateCompanyDropdown(formatted);
-            localStorage.setItem('puantaj_son_firma_v4', formatted);
+            localStorage.setItem('puantaj_son_firma_v6', formatted);
             updateFinanceInputs();
             renderCalendar();
         }
@@ -531,21 +490,11 @@
 
     function renderCalendar() {
         calendarGrid.innerHTML = '';
-        
-        const daysOfWeek = [
-            { name: 'Pzt', isWeekend: false },
-            { name: 'Sal', isWeekend: false },
-            { name: 'Çar', isWeekend: false },
-            { name: 'Per', isWeekend: false },
-            { name: 'Cum', isWeekend: false },
-            { name: 'Cmt', isWeekend: true },
-            { name: 'Paz', isWeekend: true }
-        ];
-
-        daysOfWeek.forEach(d => {
+        const days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+        days.forEach((d, idx) => {
             const div = document.createElement('div');
-            div.className = d.isWeekend ? 'day-header weekend' : 'day-header';
-            div.innerText = d.name;
+            div.className = idx >= 5 ? 'day-header weekend' : 'day-header';
+            div.innerText = d;
             calendarGrid.appendChild(div);
         });
 
@@ -560,20 +509,14 @@
 
         for (let i = 0; i < firstDayIndex; i++) {
             const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'day-header';
             calendarGrid.appendChild(emptyDiv);
         }
 
         for (let day = 1; day <= totalDays; day++) {
             const cell = document.createElement('div');
             cell.className = 'day-cell';
-            
-            const currentDayOfWeek = (firstDayIndex + day - 1) % 7;
-            const isWeekend = (currentDayOfWeek === 5 || currentDayOfWeek === 6);
-
-            if (isWeekend) {
-                cell.classList.add('weekend-cell');
-            }
+            const isWeekend = ((firstDayIndex + day - 1) % 7 >= 5);
+            if (isWeekend) cell.classList.add('weekend-cell');
             
             const key = `${monthSelect.value}_${company}_${day}`;
             const currentState = puantajData[key] || '';
@@ -583,23 +526,14 @@
                 if(counts[currentState] !== undefined) counts[currentState]++;
             }
 
-            cell.innerHTML = `
-                <div class="day-number">${day}</div>
-                <div class="day-status">${stateLabels[currentState]}</div>
-            `;
+            cell.innerHTML = `<div class="day-number">${day}</div><div class="day-status">${stateLabels[currentState]}</div>`;
 
             cell.addEventListener('click', () => {
-                let currentIndex = states.indexOf(puantajData[key] || '');
-                let nextIndex = (currentIndex + 1) % states.length;
-                let nextState = states[nextIndex];
-
-                if (nextState) {
-                    puantajData[key] = nextState;
-                } else {
-                    delete puantajData[key];
-                }
+                let nextState = states[(states.indexOf(puantajData[key] || '') + 1) % states.length];
+                if (nextState) puantajData[key] = nextState;
+                else delete puantajData[key];
                 
-                localStorage.setItem('puantaj_verileri_v4', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v6', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -610,26 +544,21 @@
         countLeave.innerText = counts.leave;
         countReport.innerText = counts.report;
 
-        // Net Hakediş Hesaplaması: (Çalışılan Gün * Günlük Ücret) + KDV - Masraf Kesintisi - Yakıt Kesintisi
         const dailyRate = parseFloat(dailyRateInput.value) || 0;
-        let grossTotal = counts.work * dailyRate;
+        let gross = counts.work * dailyRate;
 
         if (kdvCheck.checked) {
-            const kdvRate = parseFloat(kdvRateInput.value) || 0;
-            grossTotal += grossTotal * (kdvRate / 100);
+            gross += gross * ((parseFloat(kdvRateInput.value) || 0) / 100);
         }
 
-        const deduction = parseFloat(deductionInput.value) || 0;
-        const fuelDeduction = parseFloat(fuelDeductionInput.value) || 0;
+        let net = gross - (parseFloat(deductionInput.value) || 0) - (parseFloat(fuelDeductionInput.value) || 0);
+        if (net < 0) net = 0;
 
-        let netTotal = grossTotal - deduction - fuelDeduction;
-        if (netTotal < 0) netTotal = 0;
-
-        netEarningsVal.innerText = netTotal.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' ₺';
+        netEarningsVal.innerText = net.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ₺';
     }
 
     companySelect.addEventListener('change', () => {
-        localStorage.setItem('puantaj_son_firma_v4', companySelect.value);
+        localStorage.setItem('puantaj_son_firma_v6', companySelect.value);
         updateFinanceInputs();
         renderCalendar();
     });
@@ -640,27 +569,15 @@
     });
 
     [dailyRateInput, kdvCheck, kdvRateInput, deductionInput, fuelDeductionInput].forEach(elem => {
-        elem.addEventListener('input', () => {
-            saveFinanceInputs();
-            renderCalendar();
-        });
-        elem.addEventListener('change', () => {
-            saveFinanceInputs();
-            renderCalendar();
-        });
+        elem.addEventListener('input', () => { saveFinanceInputs(); renderCalendar(); });
+        elem.addEventListener('change', () => { saveFinanceInputs(); renderCalendar(); });
     });
 
     btnSave.addEventListener('click', () => {
-        const company = companySelect.value;
-        if (!company) {
-            alert('Lütfen bir firma seçiniz!');
-            return;
-        }
-        localStorage.setItem('puantaj_verileri_v4', JSON.stringify(puantajData));
-        localStorage.setItem('puantaj_firma_listesi_v4', JSON.stringify(companyList));
-        localStorage.setItem('puantaj_finans_v4', JSON.stringify(financeData));
-        localStorage.setItem('puantaj_son_firma_v4', company);
-        alert('Tüm puantaj ve fatura hesaplama bilgileri başarıyla kaydedildi!');
+        localStorage.setItem('puantaj_verileri_v6', JSON.stringify(puantajData));
+        localStorage.setItem('puantaj_firma_listesi_v6', JSON.stringify(companyList));
+        localStorage.setItem('puantaj_finans_v6', JSON.stringify(financeData));
+        alert('Kaydedildi!');
     });
 
     loadData();
