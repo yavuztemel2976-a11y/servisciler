@@ -39,7 +39,7 @@
 
         h2 {
             font-size: 1rem;
-            margin: 0 0 2px 0;
+            margin: 0 0 4px 0;
             text-align: center;
             color: #0f172a;
         }
@@ -100,65 +100,60 @@
             border-radius: 8px;
             padding: 6px 8px;
             margin-bottom: 6px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .finance-item {
             display: flex;
             flex-direction: column;
+            gap: 2px;
+        }
+
+        .finance-item label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .finance-item input {
+            width: 100%;
+            padding: 4px 6px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: #fff;
+            box-sizing: border-box;
+        }
+
+        .finance-item input[type="number"] {
+            text-align: right;
+        }
+
+        .kdv-box-inline {
+            display: flex;
+            align-items: center;
             gap: 4px;
         }
 
-        .finance-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .finance-row label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .finance-row input[type="number"] {
-            width: 90px;
-            padding: 3px 6px;
-            font-size: 0.85rem;
-            text-align: right;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-        }
-
-        .kdv-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 2px 6px;
-        }
-
-        .kdv-left {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .kdv-left input {
+        .kdv-box-inline input[type="checkbox"] {
             width: 14px;
             height: 14px;
             accent-color: var(--primary);
             cursor: pointer;
+            margin: 0;
         }
 
-        .kdv-rate {
-            width: 45px !important;
+        .kdv-box-inline input[type="number"] {
+            width: 40px !important;
             text-align: center !important;
-            padding: 2px !important;
-            font-size: 0.75rem !important;
+            padding: 3px !important;
         }
 
         .net-box {
+            grid-column: span 2;
             background: #ecfdf5;
             border: 1px solid #a7f3d0;
             border-radius: 6px;
@@ -166,6 +161,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: 2px;
         }
 
         .net-label {
@@ -176,7 +172,7 @@
         }
 
         .net-value {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 800;
             color: #059669;
         }
@@ -266,7 +262,6 @@
             display: flex;
             justify-content: space-around;
             font-size: 0.65rem;
-            margin-bottom: 6px;
             color: var(--text-muted);
         }
 
@@ -280,18 +275,6 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-        }
-
-        .btn-save {
-            width: 100%;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -321,26 +304,27 @@
     </div>
 
     <div class="finance-card">
-        <div class="finance-row">
-            <label>Günlük Ciro:</label>
+        <div class="finance-item">
+            <label>Günlük Ciro</label>
             <input type="number" id="dailyRateInput" placeholder="0" min="0" step="any">
         </div>
 
-        <div class="kdv-row">
-            <div class="kdv-left">
-                <input type="checkbox" id="kdvCheck">
-                <label for="kdvCheck" style="cursor:pointer; margin:0;">% KDV</label>
+        <div class="finance-item">
+            <label>KDV Oranı</label>
+            <div class="kdv-box-inline">
+                <input type="checkbox" id="kdvCheck" checked>
+                <input type="number" id="kdvRateInput" value="10" min="0" max="100">
+                <span style="font-size:0.75rem; font-weight:700;">%</span>
             </div>
-            <input type="number" id="kdvRateInput" class="kdv-rate" value="10" min="0" max="100">
         </div>
 
-        <div class="finance-row">
-            <label>Kesinti:</label>
+        <div class="finance-item">
+            <label>Kesinti</label>
             <input type="number" id="deductionInput" placeholder="0" min="0" step="any">
         </div>
 
-        <div class="finance-row">
-            <label>Yakıt:</label>
+        <div class="finance-item">
+            <label>Yakıt</label>
             <input type="number" id="fuelDeductionInput" placeholder="0" min="0" step="any">
         </div>
 
@@ -357,8 +341,6 @@
         <div class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span> Tatil</div>
         <div class="legend-item"><span class="legend-dot" style="background: #eab308;"></span> Raporlu</div>
     </div>
-
-    <button class="btn-save" id="btnSave">Kaydet</button>
 </div>
 
 <script>
@@ -382,7 +364,6 @@
     const countWork = document.getElementById('countWork');
     const countLeave = document.getElementById('countLeave');
     const countReport = document.getElementById('countReport');
-    const btnSave = document.getElementById('btnSave');
 
     const now = new Date();
     monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -392,15 +373,15 @@
     }
 
     function loadData() {
-        const saved = localStorage.getItem('puantaj_verileri_v8');
+        const saved = localStorage.getItem('puantaj_verileri_v9');
         if (saved) { try { puantajData = JSON.parse(saved); } catch(e) {} }
         
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v8');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v9');
         if (savedCompany) {
             companyInput.value = savedCompany;
         }
 
-        const savedFinance = localStorage.getItem('puantaj_finans_v8');
+        const savedFinance = localStorage.getItem('puantaj_finans_v9');
         if (savedFinance) { try { financeData = JSON.parse(savedFinance); } catch(e) {} }
 
         updateFinanceInputs();
@@ -427,7 +408,7 @@
             deduction: deductionInput.value,
             fuel: fuelDeductionInput.value
         };
-        localStorage.setItem('puantaj_finans_v8', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_finans_v9', JSON.stringify(financeData));
     }
 
     function renderCalendar() {
@@ -475,7 +456,7 @@
                 if (nextState) puantajData[key] = nextState;
                 else delete puantajData[key];
                 
-                localStorage.setItem('puantaj_verileri_v8', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v9', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -489,7 +470,7 @@
         const dailyRate = parseFloat(dailyRateInput.value) || 0;
         let gross = counts.work * dailyRate;
 
-        if (kderCheck = kdvCheck.checked) {
+        if (kdvCheck.checked) {
             gross += gross * ((parseFloat(kdvRateInput.value) || 0) / 100);
         }
 
@@ -500,7 +481,7 @@
     }
 
     companyInput.addEventListener('input', () => {
-        localStorage.setItem('puantaj_son_firma_v8', companyInput.value);
+        localStorage.setItem('puantaj_son_firma_v9', companyInput.value);
         updateFinanceInputs();
         renderCalendar();
     });
@@ -513,13 +494,6 @@
     [dailyRateInput, kdvCheck, kdvRateInput, deductionInput, fuelDeductionInput].forEach(elem => {
         elem.addEventListener('input', () => { saveFinanceInputs(); renderCalendar(); });
         elem.addEventListener('change', () => { saveFinanceInputs(); renderCalendar(); });
-    });
-
-    btnSave.addEventListener('click', () => {
-        localStorage.setItem('puantaj_verileri_v8', JSON.stringify(puantajData));
-        localStorage.setItem('puantaj_finans_v8', JSON.stringify(financeData));
-        localStorage.setItem('puantaj_son_firma_v8', companyInput.value);
-        alert('Kaydedildi!');
     });
 
     loadData();
