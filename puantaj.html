@@ -3,256 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticari Rota & Kâr Paneli</title>
+    <title>Çoklu Firma Puantaj Paneli</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
+
         body {
-            background-color: #f4f6f9;
-            color: #333;
-            padding: 15px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 12px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
         }
+
         .container {
             width: 100%;
             max-width: 480px;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             overflow: hidden;
-            position: relative;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
         }
-        /* İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ */
-        .independent-ticker-bar {
-            background: linear-gradient(135deg, #1b5e20, #2e7d32);
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 500;
-            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
-        }
-        .ticker-content {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-        .ticker-text {
-            font-weight: 700;
-            font-size: 13px;
-            animation: pulse-fuel 1.8s infinite;
-            letter-spacing: 0.3px;
-        }
-        @keyframes pulse-fuel {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(0.98); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        /* /İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ */
 
         .header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            padding: 20px;
             text-align: center;
-            padding: 20px 20px 10px 20px;
         }
+
         .header h1 {
-            font-size: 20px;
-            color: #1a237e;
-            margin-bottom: 4px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
         }
+
         .header p {
             font-size: 12px;
-            color: #666;
+            color: #94a3b8;
         }
-        .form-body {
-            padding: 15px 20px 20px 20px;
+
+        .content {
+            padding: 16px;
         }
-        .input-group {
-            margin-bottom: 15px;
+
+        .form-group {
+            margin-bottom: 16px;
         }
-        .input-group label {
+
+        label {
             display: block;
             font-size: 13px;
             font-weight: 600;
-            color: #444;
+            color: var(--text-main);
             margin-bottom: 6px;
         }
-        .input-row {
-            display: flex;
-            gap: 10px;
-        }
-        select, input[type="number"], input[type="text"] {
+
+        select, input {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            padding: 12px;
             font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            color: var(--text-main);
             outline: none;
             transition: border-color 0.2s;
-            background: #fff;
         }
+
         select:focus, input:focus {
-            border-color: #1a237e;
+            border-color: var(--primary);
         }
-        .checkbox-box {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 8px 12px;
+
+        .summary-card {
+            background: #f1f5f9;
             border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .summary-item .label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .summary-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .day-header {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-bottom: 4px;
+        }
+
+        .day-box {
+            aspect-ratio: 1;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+        }
+
+        .day-box .day-num {
             font-size: 13px;
             font-weight: 600;
-            color: #333;
-            cursor: pointer;
-            white-space: nowrap;
         }
-        .checkbox-box input {
-            width: 16px;
-            height: 16px;
-            accent-color: #1a237e;
+
+        .day-box .day-status {
+            font-size: 9px;
+            margin-top: 2px;
+            font-weight: 500;
         }
-        .result-card {
-            background: #e8f5e9;
-            border: 2px solid #4caf50;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 20px;
+
+        /* Durum Renkleri */
+        .day-box.status-work {
+            background-color: #dcfce7;
+            border-color: #86efac;
+            color: #166534;
         }
-        .result-card h3 {
-            font-size: 15px;
-            color: #2e7d32;
-            margin-bottom: 10px;
+
+        .day-box.status-off {
+            background-color: #fee2e2;
+            border-color: #fca5a5;
+            color: #991b1b;
         }
-        .result-row {
+
+        .day-box.status-leave {
+            background-color: #fef3c7;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+
+        .day-box.status-empty {
+            background-color: #f8fafc;
+            border-color: var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .legend {
             display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            margin-bottom: 8px;
-            color: #333;
+            justify-content: space-around;
+            margin-top: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
         }
-        .result-row.total {
-            font-weight: bold;
-            font-size: 16px;
-            color: #1b5e20;
-            border-top: 1px dashed #a5d6a7;
-            padding-top: 8px;
-            margin-top: 5px;
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .btn-save {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-save:active {
+            background-color: var(--primary-dark);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ -->
-    <div class="independent-ticker-bar">
-        <div class="ticker-content">
-            <span class="ticker-text">Güncel Motorin: 96,30 TL</span>
-        </div>
-    </div>
-    <!-- /İZOLE BAĞIMSIZ GÜNCEL YAKIT KÖŞESİ -->
-
     <div class="header">
-        <h1>🚐 Ticari Rota & Kâr Paneli</h1>
-        <p>Esnaf ve Ticari Araç Sürücüleri İçin Profesyonel Hesaplama Aracı</p>
+        <h1>Personel Puantaj Takip</h1>
+        <p>Firma Bazlı Günlük Çalışma Kontrolü</p>
     </div>
 
-    <div class="form-body">
-        <div class="input-group">
-            <label>Araç Marka ve Modeli:</label>
-            <div class="input-row">
-                <select id="carModel" onchange="calculate()">
-                    <option value="10">Citroën Jumper (10 L / 100km)</option>
-                    <option value="11">Mercedes Sprinter (11 L / 100km)</option>
-                </select>
-                <label class="checkbox-box">
-                    <input type="checkbox" id="modelActive" checked> Model 2025
-                </label>
+    <div class="content">
+        <!-- Firma Seçimi -->
+        <div class="form-group">
+            <label for="companySelect">Firma Seçin:</label>
+            <select id="companySelect" onchange="changeCompany()">
+                <option value="firma1">Firma A (Örn: Merkez Servis)</option>
+                <option value="firma2">Firma B (Örn: Okul Hattı)</option>
+                <option value="firma3">Firma C (Örn: Fabrika Servisi)</option>
+            </select>
+        </div>
+
+        <!-- Ay Seçimi -->
+        <div class="form-group">
+            <label for="monthSelect">Ay Seçin:</label>
+            <input type="month" id="monthSelect" value="2026-10" onchange="updateCalendarDays()">
+        </div>
+
+        <!-- Özet Bilgiler -->
+        <div class="summary-card">
+            <div class="summary-item">
+                <div class="label">Çalışılan</div>
+                <div class="value" id="countWork">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="label">İzinli / Tatil</div>
+                <div class="value" id="countOff">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Raporlu</div>
+                <div class="value" id="countLeave">0</div>
             </div>
         </div>
 
-        <div class="input-group">
-            <label>Günlük Yapılan Kilometre (km):</label>
-            <input type="number" id="dailyKm" value="215" oninput="calculate()">
+        <!-- Takvim Kutucukları -->
+        <div class="calendar-grid" id="calendarGrid">
+            <!-- Gün başlıkları -->
+            <div class="day-header">Pzt</div>
+            <div class="day-header">Sal</div>
+            <div class="day-header">Çar</div>
+            <div class="day-header">Per</div>
+            <div class="day-header">Cum</div>
+            <div class="day-header">Cmt</div>
+            <div class="day-header">Paz</div>
+            <!-- Kutucuklar JavaScript ile dolacak -->
         </div>
 
-        <div class="input-group">
-            <label>Güncel Yakıt Litre Fiyatı (TL):</label>
-            <div class="input-row">
-                <input type="number" step="0.01" id="fuelPrice" value="96.30" oninput="calculate()">
-                <label class="checkbox-box">
-                    <input type="checkbox" id="tollActive" checked> Gişe
-                </label>
-                <input type="number" id="tollAmount" value="200" style="max-width: 90px;" oninput="calculate()">
-            </div>
+        <!-- Renk Açıklamaları -->
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#86efac;"></div> Çalıştı</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fca5a5;"></div> Tatil</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fcd34d;"></div> Raporlu</div>
         </div>
 
-        <div class="input-group">
-            <label>Günlük Ciro (TL):</label>
-            <input type="number" id="dailyRevenue" value="6500" oninput="calculate()">
-        </div>
-
-        <div class="input-group">
-            <div class="input-row" style="align-items: center;">
-                <label class="checkbox-box" style="flex: 1;">
-                    <input type="checkbox" id="kdvActive" checked onchange="calculate()"> % + KDV
-                </label>
-                <input type="number" id="kdvRate" value="10" style="flex: 1;" oninput="calculate()">
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label>Aylık Çalışma Günü:</label>
-            <input type="number" id="workDays" value="22" oninput="calculate()">
-        </div>
-
-        <div class="result-card">
-            <h3>Hesaplama Sonucu</h3>
-            <div class="result-row">
-                <span>Günlük Toplam Gider:</span>
-                <span id="resDailyExpense">2.270,45 TL</span>
-            </div>
-            <div class="result-row">
-                <span>Günlük Net Kâr:</span>
-                <span id="resDailyProfit">4.879,55 TL</span>
-            </div>
-            <div class="result-row total">
-                <span>Aylık Toplam Net Kâr:</span>
-                <span id="resMonthlyProfit">107.350,10 TL</span>
-            </div>
-        </div>
+        <button class="btn-save" onclick="saveData()">Bilgileri Kaydet</button>
     </div>
 </div>
 
 <script>
-function calculate() {
-    let baseCons = parseFloat(document.getElementById('carModel').value) || 10;
-    let km = parseFloat(document.getElementById('dailyKm').value) || 0;
-    let price = parseFloat(document.getElementById('fuelPrice').value) || 0;
-    let toll = document.getElementById('tollActive').checked ? (parseFloat(document.getElementById('tollAmount').value) || 0) : 0;
-    let revenue = parseFloat(document.getElementById('dailyRevenue').value) || 0;
-    let workDays = parseFloat(document.getElementById('workDays').value) || 22;
+    // Durumlar: 'empty' (Boş), 'work' (Çalıştı), 'off' (Tatil), 'leave' (Raporlu)
+    const statuses = ['empty', 'work', 'off', 'leave'];
+    const statusLabels = { 'empty': '-', 'work': 'Çalıştı', 'off': 'Tatil', 'leave': 'Rapor' };
+    const statusClasses = { 'empty': 'status-empty', 'work': 'status-work', 'off': 'status-off', 'leave': 'status-leave' };
 
-    let fuelCost = (km / 100) * baseCons * price;
-    let dailyExpense = fuelCost + toll;
-    let dailyProfit = revenue - dailyExpense;
-    let monthlyProfit = dailyProfit * workDays;
+    let puantajData = {};
 
-    document.getElementById('resDailyExpense').innerText = dailyExpense.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " TL";
-    document.getElementById('resDailyProfit').innerText = dailyProfit.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " TL";
-    document.getElementById('resMonthlyProfit').innerText = monthlyProfit.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + " TL";
-}
-calculate();
+    function getCurrentKey() {
+        const company = document.getElementById('companySelect').value;
+        const month = document.getElementById('monthSelect').value;
+        return `${company}_${month}`;
+    }
+
+    function initData() {
+        const key = getCurrentKey();
+        if (!puantajData[key]) {
+            puantajData[key] = {};
+        }
+    }
+
+    function updateCalendarDays() {
+        initData();
+        const grid = document.getElementById('calendarGrid');
+        
+        // Gün başlıklarını koruyarak temizle
+        const headers = grid.querySelectorAll('.day-header');
+        grid.innerHTML = '';
+        headers.forEach(h => grid.appendChild(h));
+
+        const monthVal = document.getElementById('monthSelect').value;
+        const [year, month] = monthVal.split('-');
+        
+        // Ayın kaç gün çektiğini bul
+        const daysInMonth = new Date(year, month, 0).getDate();
+        
+        // Ayın ilk gününün haftanın hangi günü olduğunu bul (Pazartesi için ayarla)
+        let firstDayIndex = new Date(year, month - 1, 1).getDay();
+        firstDayIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1; // Pazar'ı sona al
+
+        // Boşluk bırak (ay başı hizalaması için)
+        for (let i = 0; i < firstDayIndex; i++) {
+            const emptyDiv = document.createElement('div');
+            grid.appendChild(emptyDiv);
+        }
+
+        const key = getCurrentKey();
+
+        // Günleri oluştur
+        for (let day = 1; day <= daysInMonth; day++) {
+            const box = document.createElement('div');
+            box.className = 'day-box';
+            
+            const currentStatus = puantajData[key][day] || 'empty';
+            box.classList.add(statusClasses[currentStatus]);
+
+            box.innerHTML = `
+                <span class="day-num">${day}</span>
+                <span class="day-status">${statusLabels[currentStatus]}</span>
+            `;
+
+            box.onclick = function() {
+                cycleStatus(day);
+            };
+
+            grid.appendChild(box);
+        }
+
+        updateSummary();
+    }
+
+    function cycleStatus(day) {
+        const key = getCurrentKey();
+        let currentStatus = puantajData[key][day] || 'empty';
+        
+        let currentIndex = statuses.indexOf(currentStatus);
+        let nextIndex = (currentIndex + 1) % statuses.length;
+        
+        puantajData[key][day] = statuses[nextIndex];
+        updateCalendarDays();
+    }
+
+    function updateSummary() {
+        const key = getCurrentKey();
+        const monthData = puantajData[key] || {};
+        
+        let workCount = 0;
+        let offCount = 0;
+        let leaveCount = 0;
+
+        for (let day in monthData) {
+            if (monthData[day] === 'work') workCount++;
+            if (monthData[day] === 'off') offCount++;
+            if (monthData[day] === 'leave') leaveCount++;
+        }
+
+        document.getElementById('countWork').innerText = workCount;
+        document.getElementById('countOff').innerText = offCount;
+        document.getElementById('countLeave').innerText = leaveCount;
+    }
+
+    function changeCompany() {
+        updateCalendarDays();
+    }
+
+    function saveData() {
+        alert("Puantaj bilgileri başarıyla kaydedildi!");
+    }
+
+    // Sayfa açıldığında takvimi kur
+    updateCalendarDays();
 </script>
 
 </body>
