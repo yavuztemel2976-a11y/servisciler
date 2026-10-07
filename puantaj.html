@@ -50,7 +50,7 @@
             margin-bottom: 6px;
         }
 
-        .top-row select, .top-row input {
+        .top-row input {
             padding: 6px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -59,26 +59,8 @@
             box-sizing: border-box;
         }
 
-        .company-box {
+        .company-input {
             flex: 1;
-            display: flex;
-            gap: 4px;
-        }
-
-        .company-box select {
-            flex: 1;
-        }
-
-        .btn-add {
-            background: #f1f5f9;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--primary);
-            white-space: nowrap;
         }
 
         .month-box {
@@ -319,10 +301,7 @@
     <h2>Aylık Puantaj</h2>
 
     <div class="top-row">
-        <div class="company-box">
-            <select id="companySelect"></select>
-            <button type="button" class="btn-add" id="btnAddCompany">+ Yeni</button>
-        </div>
+        <input type="text" id="companyInput" class="company-input" placeholder="Firma Adı Yazın...">
         <input type="month" id="monthSelect" class="month-box">
     </div>
 
@@ -387,11 +366,9 @@
     const stateLabels = { '': '-', 'work': 'Çalıştı', 'leave': 'Tatil', 'report': 'Rapor' };
     
     let puantajData = {}; 
-    let companyList = []; // Başlangıçta boş
     let financeData = {};
 
-    const companySelect = document.getElementById('companySelect');
-    const btnAddCompany = document.getElementById('btnAddCompany');
+    const companyInput = document.getElementById('companyInput');
     const monthSelect = document.getElementById('monthSelect');
     
     const dailyRateInput = document.getElementById('dailyRateInput');
@@ -410,43 +387,27 @@
     const now = new Date();
     monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
+    function getCompanyName() {
+        return companyInput.value.trim() || 'Genel';
+    }
+
     function loadData() {
-        const saved = localStorage.getItem('puantaj_verileri_v6');
+        const saved = localStorage.getItem('puantaj_verileri_v8');
         if (saved) { try { puantajData = JSON.parse(saved); } catch(e) {} }
         
-        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v6');
-        if (savedCompanies) { try { companyList = JSON.parse(savedCompanies); } catch(e) {} }
-
-        // Eğer kayıtlı hiç firma yoksa örnek boş bırakmak yerine kullanıcı eklesin diye yönlendiriyoruz
-        if (companyList.length === 0) {
-            companyList = ['Firma Seçiniz / Ekle'];
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v8');
+        if (savedCompany) {
+            companyInput.value = savedCompany;
         }
 
-        const savedFinance = localStorage.getItem('puantaj_finans_v6');
+        const savedFinance = localStorage.getItem('puantaj_finans_v8');
         if (savedFinance) { try { financeData = JSON.parse(savedFinance); } catch(e) {} }
 
-        updateCompanyDropdown();
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v6');
-        if (savedCompany && companyList.includes(savedCompany)) {
-            companySelect.value = savedCompany;
-        }
         updateFinanceInputs();
     }
 
-    function updateCompanyDropdown(selectedVal = '') {
-        const current = selectedVal || companySelect.value || companyList[0];
-        companySelect.innerHTML = '';
-        companyList.forEach(comp => {
-            const opt = document.createElement('option');
-            opt.value = comp;
-            opt.textContent = comp;
-            companySelect.appendChild(opt);
-        });
-        if (companyList.includes(current)) companySelect.value = current;
-    }
-
     function getFinanceKey() {
-        return `${monthSelect.value}_${companySelect.value || companyList[0]}`;
+        return `${monthSelect.value}_${getCompanyName()}`;
     }
 
     function updateFinanceInputs() {
@@ -466,27 +427,8 @@
             deduction: deductionInput.value,
             fuel: fuelDeductionInput.value
         };
-        localStorage.setItem('puantaj_finans_v6', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_finans_v8', JSON.stringify(financeData));
     }
-
-    btnAddCompany.addEventListener('click', () => {
-        const newComp = prompt('Firma adı:');
-        if (newComp && newComp.trim() !== '') {
-            const formatted = newComp.trim();
-            // Eğer ilk varsayılan "Firma Seçiniz / Ekle" varsa listeden çıkaralım
-            if (companyList.includes('Firma Seçiniz / Ekle')) {
-                companyList = companyList.filter(c => c !== 'Firma Seçiniz / Ekle');
-            }
-            if (!companyList.includes(formatted)) {
-                companyList.push(formatted);
-                localStorage.setItem('puantaj_firma_listesi_v6', JSON.stringify(companyList));
-            }
-            updateCompanyDropdown(formatted);
-            localStorage.setItem('puantaj_son_firma_v6', formatted);
-            updateFinanceInputs();
-            renderCalendar();
-        }
-    });
 
     function renderCalendar() {
         calendarGrid.innerHTML = '';
@@ -503,7 +445,7 @@
 
         const firstDayIndex = (new Date(year, month - 1, 1).getDay() + 6) % 7;
         const totalDays = new Date(year, month, 0).getDate();
-        const company = companySelect.value || 'Genel';
+        const company = getCompanyName();
 
         let counts = { work: 0, leave: 0, report: 0 };
 
@@ -533,7 +475,7 @@
                 if (nextState) puantajData[key] = nextState;
                 else delete puantajData[key];
                 
-                localStorage.setItem('puantaj_verileri_v6', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v8', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -547,7 +489,7 @@
         const dailyRate = parseFloat(dailyRateInput.value) || 0;
         let gross = counts.work * dailyRate;
 
-        if (kdvCheck.checked) {
+        if (kderCheck = kdvCheck.checked) {
             gross += gross * ((parseFloat(kdvRateInput.value) || 0) / 100);
         }
 
@@ -557,8 +499,8 @@
         netEarningsVal.innerText = net.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ₺';
     }
 
-    companySelect.addEventListener('change', () => {
-        localStorage.setItem('puantaj_son_firma_v6', companySelect.value);
+    companyInput.addEventListener('input', () => {
+        localStorage.setItem('puantaj_son_firma_v8', companyInput.value);
         updateFinanceInputs();
         renderCalendar();
     });
@@ -574,9 +516,9 @@
     });
 
     btnSave.addEventListener('click', () => {
-        localStorage.setItem('puantaj_verileri_v6', JSON.stringify(puantajData));
-        localStorage.setItem('puantaj_firma_listesi_v6', JSON.stringify(companyList));
-        localStorage.setItem('puantaj_finans_v6', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_verileri_v8', JSON.stringify(puantajData));
+        localStorage.setItem('puantaj_finans_v8', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_son_firma_v8', companyInput.value);
         alert('Kaydedildi!');
     });
 
