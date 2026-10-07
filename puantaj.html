@@ -129,69 +129,93 @@
             margin-top: 2px;
         }
 
-        /* Kazanç Özeti Kutusu */
-        .earnings-card {
-            background: #ecfdf5;
-            border: 1px solid #a7f3d0;
+        /* Fatura ve Finans Panel Stili */
+        .finance-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .finance-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .earnings-left {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
+        .finance-row label {
+            margin-bottom: 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
-        .earnings-label {
+        .finance-row input[type="number"] {
+            width: 120px;
+            padding: 6px 8px;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        /* KDV Satırı Tasarımı (Gönderdiğiniz görseldeki şıklıkta) */
+        .kdv-checkbox-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .kdv-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .kdv-left input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .kdv-rate-input {
+            width: 60px !important;
+            text-align: center;
+            padding: 4px !important;
+            font-size: 0.85rem !important;
+        }
+
+        /* Net Hak Ediş Vurgu Kutusu */
+        .net-earnings-box {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .net-label {
             font-size: 0.75rem;
             font-weight: 700;
             color: #065f46;
             text-transform: uppercase;
         }
 
-        .price-input-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .price-input-wrapper input {
-            padding: 6px 8px;
-            font-size: 0.85rem;
-            border: 1px solid #6ee7b7;
-            border-radius: 6px;
-            width: 110px;
-            background: #fff;
-        }
-
-        .price-input-wrapper span {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #047857;
-        }
-
-        .earnings-right {
-            text-align: right;
-        }
-
-        .earnings-total-label {
-            font-size: 0.7rem;
-            color: #047857;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .earnings-total-value {
-            font-size: 1.25rem;
+        .net-value {
+            font-size: 1.2rem;
             font-weight: 800;
             color: #059669;
-            margin-top: 2px;
         }
 
         .calendar-grid {
@@ -319,7 +343,7 @@
 
 <div class="container">
     <h2>Aylık Puantaj</h2>
-    <div class="subtitle">Firma Bazlı Günlük Çalışma ve Hak Ediş Kontrolü</div>
+    <div class="subtitle">Firma Bazlı Çalışma, KDV ve Fatura Hesaplama</div>
 
     <div class="form-group">
         <label for="companySelect">Firma Adı:</label>
@@ -349,18 +373,36 @@
         </div>
     </div>
 
-    <!-- Kazanç / Tutar Hesaplama Alanı -->
-    <div class="earnings-card">
-        <div class="earnings-left">
-            <div class="earnings-label">Günlük / Sefer Ücreti</div>
-            <div class="price-input-wrapper">
-                <input type="number" id="dailyRateInput" placeholder="0" min="0" step="any">
-                <span>₺</span>
-            </div>
+    <!-- Fatura & Finans Hesaplama Paneli -->
+    <div class="finance-card">
+        <div class="finance-row">
+            <label>Günlük / Sefer Ücreti (₺):</label>
+            <input type="number" id="dailyRateInput" placeholder="0" min="0" step="any">
         </div>
-        <div class="earnings-right">
-            <div class="earnings-total-label">Aylık Toplam</div>
-            <div class="earnings-total-value" id="totalEarningsVal">0 ₺</div>
+
+        <!-- KDV Seçim Satırı -->
+        <div class="kdv-checkbox-row">
+            <div class="kdv-left">
+                <input type="checkbox" id="kdvCheck">
+                <label for="kdvCheck" style="cursor:pointer; margin:0;">% KDV Ekle</label>
+            </div>
+            <input type="number" id="kdvRateInput" class="kdv-rate-input" value="10" min="0" max="100">
+        </div>
+
+        <div class="finance-row">
+            <label>Firma Masraf / Kesinti (₺):</label>
+            <input type="number" id="deductionInput" placeholder="0" min="0" step="any">
+        </div>
+
+        <div class="finance-row">
+            <label>Yakıt Kesintisi (₺):</label>
+            <input type="number" id="fuelDeductionInput" placeholder="0" min="0" step="any">
+        </div>
+
+        <!-- Net Hak Ediş -->
+        <div class="net-earnings-box">
+            <div class="net-label">Net Fatura / Hakediş</div>
+            <div class="net-value" id="netEarningsVal">0 ₺</div>
         </div>
     </div>
 
@@ -381,14 +423,19 @@
     
     let puantajData = {}; 
     let companyList = ['Meva Turizm'];
-    let ratesData = {}; // Her firmanın günlük ücret hafızası
+    let financeData = {}; // Her firmanın mali verilerini saklar
 
     const companySelect = document.getElementById('companySelect');
     const btnAddCompany = document.getElementById('btnAddCompany');
     const monthSelect = document.getElementById('monthSelect');
-    const dailyRateInput = document.getElementById('dailyRateInput');
-    const totalEarningsVal = document.getElementById('totalEarningsVal');
     
+    const dailyRateInput = document.getElementById('dailyRateInput');
+    const kdvCheck = document.getElementById('kdvCheck');
+    const kdvRateInput = document.getElementById('kdvRateInput');
+    const deductionInput = document.getElementById('deductionInput');
+    const fuelDeductionInput = document.getElementById('fuelDeductionInput');
+    const netEarningsVal = document.getElementById('netEarningsVal');
+
     const calendarGrid = document.getElementById('calendarGrid');
     const countWork = document.getElementById('countWork');
     const countLeave = document.getElementById('countLeave');
@@ -399,29 +446,29 @@
     monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
     function loadData() {
-        const saved = localStorage.getItem('puantaj_verileri_v3');
+        const saved = localStorage.getItem('puantaj_verileri_v4');
         if (saved) {
             try { puantajData = JSON.parse(saved); } catch(e) { puantajData = {}; }
         }
         
-        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v3');
+        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v4');
         if (savedCompanies) {
             try { companyList = JSON.parse(savedCompanies); } catch(e) {}
         }
 
-        const savedRates = localStorage.getItem('puantaj_ucretler_v3');
-        if (savedRates) {
-            try { ratesData = JSON.parse(savedRates); } catch(e) { ratesData = {}; }
+        const savedFinance = localStorage.getItem('puantaj_finans_v4');
+        if (savedFinance) {
+            try { financeData = JSON.parse(savedFinance); } catch(e) { financeData = {}; }
         }
 
         updateCompanyDropdown();
 
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v3');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v4');
         if (savedCompany && companyList.includes(savedCompany)) {
             companySelect.value = savedCompany;
         }
 
-        updateRateInput();
+        updateFinanceInputs();
     }
 
     function updateCompanyDropdown(selectedVal = '') {
@@ -438,11 +485,33 @@
         }
     }
 
-    function updateRateInput() {
+    function getFinanceKey() {
         const company = companySelect.value || companyList[0];
         const monthKey = monthSelect.value;
-        const rateKey = `${monthKey}_${company}`;
-        dailyRateInput.value = ratesData[rateKey] !== undefined ? ratesData[rateKey] : '';
+        return `${monthKey}_${company}`;
+    }
+
+    function updateFinanceInputs() {
+        const key = getFinanceKey();
+        const data = financeData[key] || { rate: '', kdvActive: true, kdvRate: 10, deduction: '', fuel: '' };
+        
+        dailyRateInput.value = data.rate !== undefined ? data.rate : '';
+        kdvCheck.checked = data.kdvActive !== undefined ? data.kdvActive : true;
+        kdvRateInput.value = data.kdvRate !== undefined ? data.kdvRate : 10;
+        deductionInput.value = data.deduction !== undefined ? data.deduction : '';
+        fuelDeductionInput.value = data.fuel !== undefined ? data.fuel : '';
+    }
+
+    function saveFinanceInputs() {
+        const key = getFinanceKey();
+        financeData[key] = {
+            rate: dailyRateInput.value,
+            kdvActive: kdvCheck.checked,
+            kdvRate: kdvRateInput.value,
+            deduction: deductionInput.value,
+            fuel: fuelDeductionInput.value
+        };
+        localStorage.setItem('puantaj_finans_v4', JSON.stringify(financeData));
     }
 
     btnAddCompany.addEventListener('click', () => {
@@ -451,11 +520,11 @@
             const formatted = newComp.trim();
             if (!companyList.includes(formatted)) {
                 companyList.push(formatted);
-                localStorage.setItem('puantaj_firma_listesi_v3', JSON.stringify(companyList));
+                localStorage.setItem('puantaj_firma_listesi_v4', JSON.stringify(companyList));
             }
             updateCompanyDropdown(formatted);
-            localStorage.setItem('puantaj_son_firma_v3', formatted);
-            updateRateInput();
+            localStorage.setItem('puantaj_son_firma_v4', formatted);
+            updateFinanceInputs();
             renderCalendar();
         }
     });
@@ -530,7 +599,7 @@
                     delete puantajData[key];
                 }
                 
-                localStorage.setItem('puantaj_verileri_v3', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v4', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -541,30 +610,44 @@
         countLeave.innerText = counts.leave;
         countReport.innerText = counts.report;
 
-        // Toplam Kazanç Hesaplama (Çalışılan Gün Sayısı * Günlük Ücret)
+        // Net Hakediş Hesaplaması: (Çalışılan Gün * Günlük Ücret) + KDV - Masraf Kesintisi - Yakıt Kesintisi
         const dailyRate = parseFloat(dailyRateInput.value) || 0;
-        const totalEarnings = counts.work * dailyRate;
-        totalEarningsVal.innerText = totalEarnings.toLocaleString('tr-TR') + ' ₺';
+        let grossTotal = counts.work * dailyRate;
+
+        if (kdvCheck.checked) {
+            const kdvRate = parseFloat(kdvRateInput.value) || 0;
+            grossTotal += grossTotal * (kdvRate / 100);
+        }
+
+        const deduction = parseFloat(deductionInput.value) || 0;
+        const fuelDeduction = parseFloat(fuelDeductionInput.value) || 0;
+
+        let netTotal = grossTotal - deduction - fuelDeduction;
+        if (netTotal < 0) netTotal = 0;
+
+        netEarningsVal.innerText = netTotal.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ' ₺';
     }
 
     companySelect.addEventListener('change', () => {
-        localStorage.setItem('puantaj_son_firma_v3', companySelect.value);
-        updateRateInput();
+        localStorage.setItem('puantaj_son_firma_v4', companySelect.value);
+        updateFinanceInputs();
         renderCalendar();
     });
 
     monthSelect.addEventListener('change', () => {
-        updateRateInput();
+        updateFinanceInputs();
         renderCalendar();
     });
 
-    dailyRateInput.addEventListener('input', () => {
-        const company = companySelect.value || companyList[0];
-        const monthKey = monthSelect.value;
-        const rateKey = `${monthKey}_${company}`;
-        ratesData[rateKey] = dailyRateInput.value;
-        localStorage.setItem('puantaj_ucretler_v3', JSON.stringify(ratesData));
-        renderCalendar();
+    [dailyRateInput, kdvCheck, kdvRateInput, deductionInput, fuelDeductionInput].forEach(elem => {
+        elem.addEventListener('input', () => {
+            saveFinanceInputs();
+            renderCalendar();
+        });
+        elem.addEventListener('change', () => {
+            saveFinanceInputs();
+            renderCalendar();
+        });
     });
 
     btnSave.addEventListener('click', () => {
@@ -573,11 +656,11 @@
             alert('Lütfen bir firma seçiniz!');
             return;
         }
-        localStorage.setItem('puantaj_verileri_v3', JSON.stringify(puantajData));
-        localStorage.setItem('puantaj_firma_listesi_v3', JSON.stringify(companyList));
-        localStorage.setItem('puantaj_ucretler_v3', JSON.stringify(ratesData));
-        localStorage.setItem('puantaj_son_firma_v3', company);
-        alert('Tüm puantaj ve kazanç bilgileri başarıyla kaydedildi!');
+        localStorage.setItem('puantaj_verileri_v4', JSON.stringify(puantajData));
+        localStorage.setItem('puantaj_firma_listesi_v4', JSON.stringify(companyList));
+        localStorage.setItem('puantaj_finans_v4', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_son_firma_v4', company);
+        alert('Tüm puantaj ve fatura hesaplama bilgileri başarıyla kaydedildi!');
     });
 
     loadData();
