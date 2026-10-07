@@ -119,6 +119,11 @@
             padding-bottom: 4px;
         }
 
+        /* Hafta sonu başlık rengi (Cumartesi ve Pazar) */
+        .day-header.weekend {
+            color: #dc2626;
+        }
+
         .day-cell {
             background: #ffffff;
             border: 1px solid var(--border-color);
@@ -139,9 +144,19 @@
             cursor: default;
         }
 
+        /* Hafta sonu günlerinin arka planı hafif renkli (işaretlenmemişse) */
+        .day-cell.weekend-cell {
+            background-color: #fff1f2;
+            border-color: #fecdd3;
+        }
+
         .day-number {
             font-size: 0.85rem;
             font-weight: 600;
+        }
+
+        .weekend-cell .day-number {
+            color: #e11d48;
         }
 
         .day-status {
@@ -150,31 +165,34 @@
             color: var(--text-muted);
         }
 
-        /* Durum Renkleri */
+        /* Durum Renkleri (İşaretlenince durum rengi öncelikli olur) */
         .day-cell.status-work {
-            background-color: #dcfce7;
-            border-color: #22c55e;
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
         }
+        .day-cell.status-work .day-number,
         .day-cell.status-work .day-status {
-            color: #15803d;
+            color: #15803d !important;
             font-weight: 700;
         }
 
         .day-cell.status-leave {
-            background-color: #fee2e2;
-            border-color: #ef4444;
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
         }
+        .day-cell.status-leave .day-number,
         .day-cell.status-leave .day-status {
-            color: #b91c1c;
+            color: #b91c1c !important;
             font-weight: 700;
         }
 
         .day-cell.status-report {
-            background-color: #fef9c3;
-            border-color: #eab308;
+            background-color: #fef9c3 !important;
+            border-color: #eab308 !important;
         }
+        .day-cell.status-report .day-number,
         .day-cell.status-report .day-status {
-            color: #a16207;
+            color: #a16207 !important;
             font-weight: 700;
         }
 
@@ -280,11 +298,11 @@
     monthSelect.value = yearMonthStr;
 
     function loadData() {
-        const saved = localStorage.getItem('puantaj_verileri');
+        const saved = localStorage.getItem('puantaj_verileri_v2');
         if (saved) {
             try { puantajData = JSON.parse(saved); } catch(e) { puantajData = {}; }
         }
-        const savedCompany = localStorage.getItem('puantaj_son_firma');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v2');
         if (savedCompany) {
             companyInput.value = savedCompany;
         }
@@ -293,10 +311,21 @@
     function renderCalendar() {
         calendarGrid.innerHTML = '';
         
-        ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].forEach(day => {
+        // Gün başlıkları (Pazartesi'den Pazar'a)
+        const daysOfWeek = [
+            { name: 'Pzt', isWeekend: false },
+            { name: 'Sal', isWeekend: false },
+            { name: 'Çar', isWeekend: false },
+            { name: 'Per', isWeekend: false },
+            { name: 'Cum', isWeekend: false },
+            { name: 'Cmt', isWeekend: true },
+            { name: 'Paz', isWeekend: true }
+        ];
+
+        daysOfWeek.forEach(d => {
             const div = document.createElement('div');
-            div.className = 'day-header';
-            div.innerText = day;
+            div.className = d.isWeekend ? 'day-header weekend' : 'day-header';
+            div.innerText = d.name;
             calendarGrid.appendChild(div);
         });
 
@@ -318,6 +347,14 @@
         for (let day = 1; day <= totalDays; day++) {
             const cell = document.createElement('div');
             cell.className = 'day-cell';
+            
+            // Haftanın hangi günü olduğunu bul (0: Pzt, ..., 5: Cmt, 6: Paz)
+            const currentDayOfWeek = (firstDayIndex + day - 1) % 7;
+            const isWeekend = (currentDayOfWeek === 5 || currentDayOfWeek === 6);
+
+            if (isWeekend) {
+                cell.classList.add('weekend-cell');
+            }
             
             const key = `${monthSelect.value}_${company}_${day}`;
             const currentState = puantajData[key] || '';
@@ -342,6 +379,8 @@
                 } else {
                     delete puantajData[key];
                 }
+                
+                localStorage.setItem('puantaj_verileri_v2', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -353,7 +392,11 @@
         countReport.innerText = counts.report;
     }
 
-    companyInput.addEventListener('input', renderCalendar);
+    companyInput.addEventListener('input', () => {
+        localStorage.setItem('puantaj_son_firma_v2', companyInput.value);
+        renderCalendar();
+    });
+
     monthSelect.addEventListener('change', renderCalendar);
 
     btnSave.addEventListener('click', () => {
@@ -363,9 +406,9 @@
             companyInput.focus();
             return;
         }
-        localStorage.setItem('puantaj_verileri', JSON.stringify(puantajData));
-        localStorage.setItem('puantaj_son_firma', company);
-        alert('Bilgiler bu cihazda başarıyla kaydedildi!');
+        localStorage.setItem('puantaj_verileri_v2', JSON.stringify(puantajData));
+        localStorage.setItem('puantaj_son_firma_v2', company);
+        alert('Tüm puantaj bilgileri başarıyla kaydedildi!');
     });
 
     loadData();
