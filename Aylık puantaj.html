@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çoklu Firma Servis Puantajı</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .header h1 {
+            font-size: 18px;
+            color: #1e3a8a;
+            margin-bottom: 4px;
+        }
+        .header p {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .controls {
+            margin-bottom: 12px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #fff;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .days-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 4px;
+            margin-bottom: 12px;
+        }
+        .day-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px 10px;
+        }
+        .day-row.weekend {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .day-label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #334155;
+            width: 120px;
+        }
+        .day-row.weekend .day-label {
+            color: #64748b;
+        }
+        .day-select {
+            flex: 1;
+            padding: 6px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+        }
+        .summary-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            color: #166534;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🚍 Çoklu Firma Servis Puantajı</h1>
+        <p>Günlük Firma ve Çalışma Takip Paneli</p>
+    </div>
+
+    <div class="controls">
+        <select id="aySecim" onchange="puantajYukle()">
+            <option value="2026-10">Ekim 2026</option>
+            <option value="2026-11">Kasım 2026</option>
+            <option value="2026-12">Aralık 2026</option>
+            <option value="2027-01">Ocak 2027</option>
+        </select>
+    </div>
+
+    <div class="days-container" id="listeKapsayici"></div>
+
+    <div class="summary-card" id="ozetKutusu">
+        Hesaplanıyor...
+    </div>
+</div>
+
+<script>
+    const firmalar = ["Tatil / Çalışmadı", "X Firma", "A Firma", "B Firma", "C Firma", "Diğer"];
+
+    function ayGunSayisiGetir(yil, ay) {
+        return new Date(yil, ay, 0).getDate();
+    }
+
+    function puantajYukle() {
+        const aySecim = document.getElementById("aySecim").value;
+        const [yil, ay] = aySecim.split("-").map(Number);
+        const toplamGun = ayGunSayisiGetir(yil, ay);
+        
+        const kapsayici = document.getElementById("listeKapsayici");
+        kapsayici.innerHTML = "";
+
+        const kaydedilenVeriler = JSON.parse(localStorage.getItem("puantaj_" + aySecim)) || {};
+
+        for (let gun = 1; gun <= toplamGun; gun++) {
+            const tarih = new Date(yil, ay - 1, gun);
+            const gunAdiTr = tarih.toLocaleDateString('tr-TR', { weekday: 'short' });
+            const isWeekend = tarih.getDay() === 0 || tarih.getDay() === 6;
+
+            const row = document.createElement("div");
+            row.className = "day-row" + (isWeekend ? " weekend" : "");
+
+            const label = document.createElement("div");
+            label.className = "day-label";
+            label.innerText = `${gun} ${aySecim.split('-')[1]} (${gunAdiTr})` + (isWeekend ? " 🏖️" : "");
+
+            const select = document.createElement("select");
+            select.className = "day-select";
+            select.dataset.gun = gun;
+
+            firmalar.forEach(firma => {
+                const opt = document.createElement("option");
+                opt.value = firma;
+                opt.text = firma;
+                if (kaydedilenVeriler[gun] === firma) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+
+            // Eğer kayıt yoksa hafta sonu tatil, hafta içi X Firma varsayılan gelsin
+            if (!kaydedilenVeriler[gun]) {
+                select.value = isWeekend ? "Tatil / Çalışmadı" : "X Firma";
+            }
+
+            select.onchange = function() {
+                veriKaydetVeHesapla();
+            };
+
+            row.appendChild(label);
+            row.appendChild(select);
+            kapsayici.appendChild(row);
+        }
+
+        veriKaydetVeHesapla();
+    }
+
+    function veriKaydetVeHesapla() {
+        const aySecim = document.getElementById("aySecim").value;
+        const selects = document.querySelectorAll(".day-select");
+        const kayitVerisi = {};
+        const firmaSayimlari = {};
+
+        firmalar.forEach(f => firmaSayimlari[f] = 0);
+
+        selects.forEach(sel => {
+            const gun = sel.dataset.gun;
+            const deger = sel.value;
+            kayitVerisi[gun] = deger;
+            if (firmaSayimlari[deger] !== undefined) {
+                firmaSayimlari[deger]++;
+            }
+        });
+
+        localStorage.setItem("puantaj_" + aySecim, JSON.stringify(kayitVerisi));
+
+        // Özet metni oluştur
+        let ozetMetni = "<b>Aylık Firma Dağılımı:</b><br>";
+        let toplamCalisma = 0;
+        
+        for (let firma in firmaSayimlari) {
+            if (firma !== "Tatil / Çalışmadı" && firmaSayimlari[firma] > 0) {
+                ozetMetni += `${firma}: ${firmaSayimlari[firma]} gün | `;
+                toplamCalisma += firmaSayimlari[firma];
+            }
+        }
+        ozetMetni += `<br><b>Toplam Çalışılan Gün:</b> ${toplamCalisma}`;
+        document.getElementById("ozetKutusu").innerHTML = ozetMetni;
+    }
+
+    window.onload = puantajYukle;
+</script>
+
+</body>
+</html>
