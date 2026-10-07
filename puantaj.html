@@ -60,7 +60,7 @@
             margin-bottom: 4px;
         }
 
-        input[type="text"], input[type="month"] {
+        select, input[type="month"] {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -70,7 +70,32 @@
             background: #fff;
         }
 
-        input:focus {
+        .company-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .company-row select {
+            flex: 1;
+        }
+
+        .btn-add {
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        .btn-add:active {
+            background: #e2e8f0;
+        }
+
+        select:focus, input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -119,7 +144,6 @@
             padding-bottom: 4px;
         }
 
-        /* Hafta sonu başlık rengi (Cumartesi ve Pazar) */
         .day-header.weekend {
             color: #dc2626;
         }
@@ -138,13 +162,6 @@
             transition: all 0.1s ease;
         }
 
-        .day-cell.empty {
-            border: none;
-            background: transparent;
-            cursor: default;
-        }
-
-        /* Hafta sonu günlerinin arka planı hafif renkli (işaretlenmemişse) */
         .day-cell.weekend-cell {
             background-color: #fff1f2;
             border-color: #fecdd3;
@@ -165,7 +182,6 @@
             color: var(--text-muted);
         }
 
-        /* Durum Renkleri (İşaretlenince durum rengi öncelikli olur) */
         .day-cell.status-work {
             background-color: #dcfce7 !important;
             border-color: #22c55e !important;
@@ -241,8 +257,11 @@
     <div class="subtitle">Firma Bazlı Günlük Çalışma Kontrolü</div>
 
     <div class="form-group">
-        <label for="companyInput">Firma Adı:</label>
-        <input type="text" id="companyInput" placeholder="Örn: Yavuz / Cengiz Hattı" autocomplete="off">
+        <label for="companySelect">Firma Adı:</label>
+        <div class="company-row">
+            <select id="companySelect"></select>
+            <button type="button" class="btn-add" id="btnAddCompany">+ Yeni Firma</button>
+        </div>
     </div>
 
     <div class="form-group">
@@ -265,9 +284,7 @@
         </div>
     </div>
 
-    <div class="calendar-grid" id="calendarGrid">
-        <!-- Takvim günleri dinamik yüklenecek -->
-    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
 
     <div class="legend">
         <div class="legend-item"><span class="legend-dot" style="background: #22c55e;"></span> Çalıştı</div>
@@ -283,8 +300,10 @@
     const stateLabels = { '': '-', 'work': 'Çalıştı', 'leave': 'Tatil', 'report': 'Rapor' };
     
     let puantajData = {}; 
+    let companyList = ['Meva Turizm'];
 
-    const companyInput = document.getElementById('companyInput');
+    const companySelect = document.getElementById('companySelect');
+    const btnAddCompany = document.getElementById('btnAddCompany');
     const monthSelect = document.getElementById('monthSelect');
     const calendarGrid = document.getElementById('calendarGrid');
     
@@ -294,19 +313,54 @@
     const btnSave = document.getElementById('btnSave');
 
     const now = new Date();
-    const yearMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    monthSelect.value = yearMonthStr;
+    monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
     function loadData() {
         const saved = localStorage.getItem('puantaj_verileri_v2');
         if (saved) {
             try { puantajData = JSON.parse(saved); } catch(e) { puantajData = {}; }
         }
+        
+        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v2');
+        if (savedCompanies) {
+            try { companyList = JSON.parse(savedCompanies); } catch(e) {}
+        }
+
+        updateCompanyDropdown();
+
         const savedCompany = localStorage.getItem('puantaj_son_firma_v2');
-        if (savedCompany) {
-            companyInput.value = savedCompany;
+        if (savedCompany && companyList.includes(savedCompany)) {
+            companySelect.value = savedCompany;
         }
     }
+
+    function updateCompanyDropdown(selectedVal = '') {
+        const current = selectedVal || companySelect.value || companyList[0];
+        companySelect.innerHTML = '';
+        companyList.forEach(comp => {
+            const opt = document.createElement('option');
+            opt.value = comp;
+            opt.textContent = comp;
+            companySelect.appendChild(opt);
+        });
+        if (companyList.includes(current)) {
+            companySelect.value = current;
+        }
+    }
+
+    btnAddCompany.addEventListener('click', () => {
+        const newComp = prompt('Yeni firma veya hat adını giriniz:');
+        if (newComp && newComp.trim() !== '') {
+            const formatted = newComp.trim();
+            if (!companyList.includes(formatted)) {
+                companyList.push(formatted);
+                localStorage.setItem('puantaj_firma_listesi_v2', JSON.stringify(companyList));
+            }
+            updateCompanyDropdown(formatted);
+            localStorage.setItem('puantaj_son_firma_v2', formatted);
+            renderCalendar();
+        }
+    });
 
     function renderCalendar() {
         calendarGrid.innerHTML = '';
@@ -333,7 +387,7 @@
 
         const firstDayIndex = (new Date(year, month - 1, 1).getDay() + 6) % 7;
         const totalDays = new Date(year, month, 0).getDate();
-        const company = companyInput.value.trim() || 'Genel';
+        const company = companySelect.value || 'Genel';
 
         let counts = { work: 0, leave: 0, report: 0 };
 
@@ -390,18 +444,17 @@
         countReport.innerText = counts.report;
     }
 
-    companyInput.addEventListener('input', () => {
-        localStorage.setItem('puantaj_son_firma_v2', companyInput.value);
+    companySelect.addEventListener('change', () => {
+        localStorage.setItem('puantaj_son_firma_v2', companySelect.value);
         renderCalendar();
     });
 
     monthSelect.addEventListener('change', renderCalendar);
 
     btnSave.addEventListener('click', () => {
-        const company = companyInput.value.trim();
+        const company = companySelect.value;
         if (!company) {
-            alert('Lütfen kayıt için bir firma adı giriniz!');
-            companyInput.focus();
+            alert('Lütfen bir firma seçiniz!');
             return;
         }
         localStorage.setItem('puantaj_verileri_v2', JSON.stringify(puantajData));
@@ -415,3 +468,4 @@
 
 </body>
 </html>
+
