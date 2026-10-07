@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akıllı Servis Puantajı</title>
+    <title>Ticari Rota & Kâr Paneli</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a365d">
+    <link rel="apple-touch-icon" href="icon.png">
     <style>
         * {
             box-sizing: border-box;
@@ -34,75 +37,183 @@
             margin-bottom: 16px;
         }
         .header h1 {
-            font-size: 20px;
+            font-size: 22px;
             color: #1e3a8a;
             margin-bottom: 4px;
         }
         .header p {
-            font-size: 12px;
+            font-size: 13px;
             color: #64748b;
         }
-        .controls {
-            display: flex;
-            gap: 8px;
+        .form-group {
             margin-bottom: 14px;
         }
-        select {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 14px;
-            background-color: #fff;
-            color: #1e293b;
-        }
-        .days-container {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            max-height: 380px;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-        .day-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 8px 10px;
-        }
-        .day-row.weekend {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
-        }
-        .day-label {
+        label {
+            display: block;
             font-size: 13px;
             font-weight: 600;
             color: #334155;
-            width: 110px;
+            margin-bottom: 6px;
         }
-        .day-row.weekend .day-label {
-            color: #64748b;
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #fff;
+            color: #1e293b;
+            transition: border-color 0.2s;
         }
-        .day-select {
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .vehicle-row {
+            display: flex;
+            gap: 10px;
+        }
+        .vehicle-select-container {
             flex: 1;
-            padding: 6px;
-            font-size: 13px;
-            border-radius: 6px;
         }
-        .summary-box {
+        .model-container {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0 10px;
+            width: 145px;
+            justify-content: space-between;
+        }
+        .model-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+        }
+        .model-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+        .model-input {
+            width: 60px !important;
+            padding: 8px !important;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 6px !important;
+        }
+        .fuel-row {
+            display: flex;
+            gap: 10px;
+        }
+        .fuel-input-container {
+            flex: 1;
+        }
+        .toll-container {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0 10px;
+            width: 130px;
+            justify-content: space-between;
+        }
+        .toll-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+        }
+        .toll-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+        .toll-input {
+            width: 50px !important;
+            padding: 8px !important;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 6px !important;
+        }
+        .kdv-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+        }
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+        .kdv-input {
+            width: 70px !important;
+            padding: 8px !important;
+            text-align: center;
+            font-weight: 600;
+        }
+        .result-box {
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-left: 5px solid #22c55e;
             border-radius: 12px;
-            padding: 12px;
-            margin-top: 14px;
-            font-size: 13.5px;
+            padding: 14px;
+            margin-top: 18px;
+        }
+        .result-title {
+            font-size: 15px;
+            font-weight: 700;
             color: #166534;
-            font-weight: 600;
+            margin-bottom: 10px;
             text-align: center;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13.5px;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+        .result-row.total {
+            font-size: 15px;
+            font-weight: 700;
+            color: #15803d;
+            border-top: 1px dashed #bbf7d0;
+            padding-top: 8px;
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
+        .result-row.total span {
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -110,116 +221,158 @@
 
 <div class="container">
     <div class="header">
-        <h1>📅 Akıllı Servis Puantajı</h1>
-        <p>Aylık Firma ve Gün Takip Paneli</p>
+        <h1>🚐 Ticari Rota & Kâr Paneli</h1>
+        <p>Esnaf ve Ticari Araç Sürücüleri İçin Profesyonel Hesaplama Aracı</p>
     </div>
 
-    <div class="controls">
-        <select id="aySecim" onchange="puantajYukle()">
-            <option value="2026-09">Eylül 2026</option>
-            <option value="2026-10">Ekim 2026</option>
-            <option value="2026-11">Kasım 2026</option>
-            <option value="2026-12">Aralık 2026</option>
-        </select>
+    <!-- 1. Araç Marka ve Modeli + Model Yılı/Özel Ayar Alanı -->
+    <div class="form-group">
+        <label for="vehicleSelect">Araç Marka ve Modeli:</label>
+        <div class="vehicle-row">
+            <div class="vehicle-select-container">
+                <select id="vehicleSelect" onchange="calculate()">
+                    <option value="10">Citroën Jumper</option>
+                    <option value="9.5">Peugeot Boxer</option>
+                    <option value="10">Fiat Ducato</option>
+                    <option value="9">Ford Transit</option>
+                    <option value="11">Mercedes-Benz Sprinter</option>
+                    <option value="8.5">Volkswagen Crafter</option>
+                    <option value="8">Volkswagen Transporter</option>
+                    <option value="10">Renault Master</option>
+                    <option value="10">Opel Movano</option>
+                    <option value="10.5">Iveco Daily</option>
+                    <option value="10.5">Hyundai H350</option>
+                </select>
+            </div>
+            <div class="model-container">
+                <label class="model-checkbox" title="Model Yılı / Özel Yakıt Çarpanı">
+                    <input type="checkbox" id="applyModel" checked onchange="calculate()"> Model
+                </label>
+                <input type="number" id="modelYear" class="model-input" value="2026" placeholder="Yıl" oninput="calculate()">
+            </div>
+        </div>
     </div>
 
-    <div class="days-container" id="listeKapsayici"></div>
+    <!-- 2. Günlük Yapılan Kilometre -->
+    <div class="form-group">
+        <label for="km">Günlük Yapılan Kilometre (km):</label>
+        <input type="number" id="km" placeholder="Örn: 150" oninput="calculate()">
+    </div>
 
-    <div class="summary-box" id="ozetKutusu">
-        Toplam Çalışılan Gün: 0
+    <!-- 3. Güncel Yakıt Litre Fiyatı ve Gişe Alanı -->
+    <div class="form-group">
+        <label for="fuelPrice">Güncel Yakıt Litre Fiyatı (TL):</label>
+        <div class="fuel-row">
+            <div class="fuel-input-container">
+                <input type="number" id="fuelPrice" placeholder="Örn: 45.50" step="0.01" oninput="calculate()">
+            </div>
+            <div class="toll-container">
+                <label class="toll-checkbox" title="Köprü / Gişe Gideri">
+                    <input type="checkbox" id="applyToll" onchange="calculate()"> Gişe
+                </label>
+                <input type="number" id="tollCost" class="toll-input" placeholder="TL" oninput="calculate()">
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Günlük Ciro -->
+    <div class="form-group">
+        <label for="revenue">Günlük Ciro (TL):</label>
+        <input type="number" id="revenue" placeholder="Örn: 7000" oninput="calculate()">
+    </div>
+
+    <!-- 5. KDV Satırı -->
+    <div class="form-group">
+        <div class="kdv-row">
+            <label class="checkbox-container">
+                <input type="checkbox" id="applyKdv" checked onchange="calculate()"> % + KDV
+            </label>
+            <input type="number" id="kdvRate" class="kdv-input" value="10" oninput="calculate()">
+        </div>
+    </div>
+
+    <!-- 6. Aylık Çalışma Günü -->
+    <div class="form-group">
+        <label for="workDays">Aylık Çalışma Günü:</label>
+        <input type="number" id="workDays" value="26" oninput="calculate()">
+    </div>
+
+    <!-- Hesaplama (4 Sıralı ve "Toplam" kelimesi tamamen çıkarılmış düzen) -->
+    <div class="result-box">
+        <div class="result-title">Hesaplama</div>
+        <div class="result-row">
+            <span>Günlük Gider:</span>
+            <span id="resFuelCost">0,00 TL</span>
+        </div>
+        <div class="result-row">
+            <span>Aylık Gider:</span>
+            <span id="resMonthlyExpense">0,00 TL</span>
+        </div>
+        <div class="result-row">
+            <span>Günlük Net Kalan:</span>
+            <span id="resDailyProfit">0,00 TL</span>
+        </div>
+        <div class="result-row total">
+            <span>Aylık Net Bakiye:</span>
+            <span id="resMonthlyProfit">0,00 TL</span>
+        </div>
     </div>
 </div>
 
 <script>
-    const firmalar = ["Çalışmadı / Tatil", "X Firma", "A Firma", "B Firma", "Diğer Firma"];
+    function calculate() {
+        const vehicleSelect = document.getElementById("vehicleSelect");
+        let baseLPer100km = parseFloat(vehicleSelect.value) || 10;
 
-    function ayGunSayisiGetir(yil, ay) {
-        return new Date(yil, ay, 0).getDate();
-    }
-
-    function puantajYukle() {
-        const aySecim = document.getElementById("aySecim").value;
-        const [yil, ay] = aySecim.split("-").map(Number);
-        const toplamGun = ayGunSayisiGetir(yil, ay);
+        const applyModel = document.getElementById("applyModel").checked;
+        const modelYear = parseInt(document.getElementById("modelYear").value) || 2026;
         
-        const kapsayici = document.getElementById("listeKapsayici");
-        kapsayici.innerHTML = "";
-
-        const kaydedilenVeriler = JSON.parse(localStorage.getItem("puantaj_" + aySecim)) || {};
-
-        for (let gun = 1; gun <= toplamGun; gun++) {
-            const tarih = new Date(yil, ay - 1, gun);
-            const gunAdiTr = tarih.toLocaleDateString('tr-TR', { weekday: 'short' });
-            const isWeekend = tarih.getDay() === 0 || tarih.getDay() === 6;
-
-            const row = document.createElement("div");
-            row.className = "day-row" + (isWeekend ? " weekend" : "");
-
-            const label = document.createElement("div");
-            label.className = "day-label";
-            label.innerText = `${gun} ${aySecim.split('-')[1]} (${gunAdiTr})` + (isWeekend ? " 🏖️" : "");
-
-            const select = document.createElement("select");
-            select.className = "day-select";
-            select.dataset.gun = gun;
-
-            firmalar.forEach(firma => {
-                const opt = document.createElement("option");
-                opt.value = firma;
-                opt.text = firma;
-                if (kaydedilenVeriler[gun] === firma) {
-                    opt.selected = true;
-                }
-                select.appendChild(opt);
-            });
-
-            if (!kaydedilenVeriler[gun]) {
-                select.value = isWeekend ? "Çalışmadı / Tatil" : "X Firma";
+        let lPer100km = baseLPer100km;
+        if (applyModel) {
+            if (modelYear <= 2005) {
+                lPer100km *= 1.22;
+            } else if (modelYear <= 2012) {
+                lPer100km *= 1.15;
+            } else if (modelYear <= 2018) {
+                lPer100km *= 1.08;
+            } else if (modelYear <= 2022) {
+                lPer100km *= 1.03;
             }
-
-            select.onchange = function() {
-                veriKaydetVeHesapla();
-            };
-
-            row.appendChild(label);
-            row.appendChild(select);
-            kapsayici.appendChild(row);
         }
 
-        guncelleOzet();
+        const km = parseFloat(document.getElementById("km").value) || 0;
+        const fuelPrice = parseFloat(document.getElementById("fuelPrice").value) || 0;
+        let revenue = parseFloat(document.getElementById("revenue").value) || 0;
+        const workDays = parseFloat(document.getElementById("workDays").value) || 0;
+
+        const applyKdv = document.getElementById("applyKdv").checked;
+        const kdvRate = parseFloat(document.getElementById("kdvRate").value) || 0;
+
+        const applyToll = document.getElementById("applyToll").checked;
+        const tollCost = parseFloat(document.getElementById("tollCost").value) || 0;
+
+        let totalRevenue = revenue;
+        if (applyKdv) {
+            totalRevenue = revenue * (1 + (kdvRate / 100));
+        }
+
+        const dailyFuelCost = (km / 100) * lPer100km * fuelPrice;
+        let totalDailyExpense = dailyFuelCost;
+        if (applyToll) {
+            totalDailyExpense += tollCost;
+        }
+
+        const totalMonthlyExpense = totalDailyExpense * workDays;
+        const dailyNetProfit = totalRevenue - totalDailyExpense;
+        const monthlyNetProfit = dailyNetProfit * workDays;
+
+        document.getElementById("resFuelCost").innerText = totalDailyExpense.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+        document.getElementById("resMonthlyExpense").innerText = totalMonthlyExpense.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+        document.getElementById("resDailyProfit").innerText = dailyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
+        document.getElementById("resMonthlyProfit").innerText = monthlyNetProfit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL";
     }
 
-    function veriKaydetVeHesapla() {
-        const aySecim = document.getElementById("aySecim").value;
-        const selects = document.querySelectorAll(".day-select");
-        const kayitVerisi = {};
-        let calisilanToplam = 0;
-
-        selects.forEach(sel => {
-            const gun = sel.dataset.gun;
-            const deger = sel.value;
-            kayitVerisi[gun] = deger;
-            if (deger !== "Çalışmadı / Tatil") {
-                calisilanToplam++;
-            }
-        });
-
-        localStorage.setItem("puantaj_" + aySecim, JSON.stringify(kayitVerisi));
-        guncelleOzet();
-    }
-
-    function guncelleOzet() {
-        const selects = document.querySelectorAll(".day-select");
-        let calisilanToplam = 0;
-        selects.forEach(sel => {
-            if (sel.value !== "Çalışmadı / Tatil") {
-                calisilanToplam++;
-            }
-        });
-        document.getElementById("ozetKutusu").innerText = `Toplam Çalışılan Gün: ${calisilanToplam}`;
-    }
-
-    window.onload = puantajYukle;
+    window.onload = calculate;
 </script>
 
 </body>
