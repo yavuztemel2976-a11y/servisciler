@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personel Puantaj Takip</title>
+    <title>Aylık Puantaj</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -237,7 +237,7 @@
 <body>
 
 <div class="container">
-    <h2>Personel Puantaj Takip</h2>
+    <h2>Aylık Puantaj</h2>
     <div class="subtitle">Firma Bazlı Günlük Çalışma Kontrolü</div>
 
     <div class="form-group">
@@ -311,7 +311,6 @@
     function renderCalendar() {
         calendarGrid.innerHTML = '';
         
-        // Gün başlıkları (Pazartesi'den Pazar'a)
         const daysOfWeek = [
             { name: 'Pzt', isWeekend: false },
             { name: 'Sal', isWeekend: false },
@@ -348,7 +347,6 @@
             const cell = document.createElement('div');
             cell.className = 'day-cell';
             
-            // Haftanın hangi günü olduğunu bul (0: Pzt, ..., 5: Cmt, 6: Paz)
             const currentDayOfWeek = (firstDayIndex + day - 1) % 7;
             const isWeekend = (currentDayOfWeek === 5 || currentDayOfWeek === 6);
 
