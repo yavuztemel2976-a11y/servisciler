@@ -60,7 +60,7 @@
             margin-bottom: 4px;
         }
 
-        select, input[type="month"] {
+        select, input[type="month"], input[type="number"] {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -126,6 +126,71 @@
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--primary);
+            margin-top: 2px;
+        }
+
+        /* Kazanç Özeti Kutusu */
+        .earnings-card {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .earnings-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .earnings-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #065f46;
+            text-transform: uppercase;
+        }
+
+        .price-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .price-input-wrapper input {
+            padding: 6px 8px;
+            font-size: 0.85rem;
+            border: 1px solid #6ee7b7;
+            border-radius: 6px;
+            width: 110px;
+            background: #fff;
+        }
+
+        .price-input-wrapper span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #047857;
+        }
+
+        .earnings-right {
+            text-align: right;
+        }
+
+        .earnings-total-label {
+            font-size: 0.7rem;
+            color: #047857;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .earnings-total-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #059669;
             margin-top: 2px;
         }
 
@@ -254,7 +319,7 @@
 
 <div class="container">
     <h2>Aylık Puantaj</h2>
-    <div class="subtitle">Firma Bazlı Günlük Çalışma Kontrolü</div>
+    <div class="subtitle">Firma Bazlı Günlük Çalışma ve Hak Ediş Kontrolü</div>
 
     <div class="form-group">
         <label for="companySelect">Firma Adı:</label>
@@ -284,6 +349,21 @@
         </div>
     </div>
 
+    <!-- Kazanç / Tutar Hesaplama Alanı -->
+    <div class="earnings-card">
+        <div class="earnings-left">
+            <div class="earnings-label">Günlük / Sefer Ücreti</div>
+            <div class="price-input-wrapper">
+                <input type="number" id="dailyRateInput" placeholder="0" min="0" step="any">
+                <span>₺</span>
+            </div>
+        </div>
+        <div class="earnings-right">
+            <div class="earnings-total-label">Aylık Toplam</div>
+            <div class="earnings-total-value" id="totalEarningsVal">0 ₺</div>
+        </div>
+    </div>
+
     <div class="calendar-grid" id="calendarGrid"></div>
 
     <div class="legend">
@@ -301,12 +381,15 @@
     
     let puantajData = {}; 
     let companyList = ['Meva Turizm'];
+    let ratesData = {}; // Her firmanın günlük ücret hafızası
 
     const companySelect = document.getElementById('companySelect');
     const btnAddCompany = document.getElementById('btnAddCompany');
     const monthSelect = document.getElementById('monthSelect');
-    const calendarGrid = document.getElementById('calendarGrid');
+    const dailyRateInput = document.getElementById('dailyRateInput');
+    const totalEarningsVal = document.getElementById('totalEarningsVal');
     
+    const calendarGrid = document.getElementById('calendarGrid');
     const countWork = document.getElementById('countWork');
     const countLeave = document.getElementById('countLeave');
     const countReport = document.getElementById('countReport');
@@ -316,22 +399,29 @@
     monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
     function loadData() {
-        const saved = localStorage.getItem('puantaj_verileri_v2');
+        const saved = localStorage.getItem('puantaj_verileri_v3');
         if (saved) {
             try { puantajData = JSON.parse(saved); } catch(e) { puantajData = {}; }
         }
         
-        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v2');
+        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v3');
         if (savedCompanies) {
             try { companyList = JSON.parse(savedCompanies); } catch(e) {}
         }
 
+        const savedRates = localStorage.getItem('puantaj_ucretler_v3');
+        if (savedRates) {
+            try { ratesData = JSON.parse(savedRates); } catch(e) { ratesData = {}; }
+        }
+
         updateCompanyDropdown();
 
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v2');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v3');
         if (savedCompany && companyList.includes(savedCompany)) {
             companySelect.value = savedCompany;
         }
+
+        updateRateInput();
     }
 
     function updateCompanyDropdown(selectedVal = '') {
@@ -348,16 +438,24 @@
         }
     }
 
+    function updateRateInput() {
+        const company = companySelect.value || companyList[0];
+        const monthKey = monthSelect.value;
+        const rateKey = `${monthKey}_${company}`;
+        dailyRateInput.value = ratesData[rateKey] !== undefined ? ratesData[rateKey] : '';
+    }
+
     btnAddCompany.addEventListener('click', () => {
         const newComp = prompt('Yeni firma veya hat adını giriniz:');
         if (newComp && newComp.trim() !== '') {
             const formatted = newComp.trim();
             if (!companyList.includes(formatted)) {
                 companyList.push(formatted);
-                localStorage.setItem('puantaj_firma_listesi_v2', JSON.stringify(companyList));
+                localStorage.setItem('puantaj_firma_listesi_v3', JSON.stringify(companyList));
             }
             updateCompanyDropdown(formatted);
-            localStorage.setItem('puantaj_son_firma_v2', formatted);
+            localStorage.setItem('puantaj_son_firma_v3', formatted);
+            updateRateInput();
             renderCalendar();
         }
     });
@@ -432,7 +530,7 @@
                     delete puantajData[key];
                 }
                 
-                localStorage.setItem('puantaj_verileri_v2', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v3', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -442,14 +540,32 @@
         countWork.innerText = counts.work;
         countLeave.innerText = counts.leave;
         countReport.innerText = counts.report;
+
+        // Toplam Kazanç Hesaplama (Çalışılan Gün Sayısı * Günlük Ücret)
+        const dailyRate = parseFloat(dailyRateInput.value) || 0;
+        const totalEarnings = counts.work * dailyRate;
+        totalEarningsVal.innerText = totalEarnings.toLocaleString('tr-TR') + ' ₺';
     }
 
     companySelect.addEventListener('change', () => {
-        localStorage.setItem('puantaj_son_firma_v2', companySelect.value);
+        localStorage.setItem('puantaj_son_firma_v3', companySelect.value);
+        updateRateInput();
         renderCalendar();
     });
 
-    monthSelect.addEventListener('change', renderCalendar);
+    monthSelect.addEventListener('change', () => {
+        updateRateInput();
+        renderCalendar();
+    });
+
+    dailyRateInput.addEventListener('input', () => {
+        const company = companySelect.value || companyList[0];
+        const monthKey = monthSelect.value;
+        const rateKey = `${monthKey}_${company}`;
+        ratesData[rateKey] = dailyRateInput.value;
+        localStorage.setItem('puantaj_ucretler_v3', JSON.stringify(ratesData));
+        renderCalendar();
+    });
 
     btnSave.addEventListener('click', () => {
         const company = companySelect.value;
@@ -457,9 +573,11 @@
             alert('Lütfen bir firma seçiniz!');
             return;
         }
-        localStorage.setItem('puantaj_verileri_v2', JSON.stringify(puantajData));
-        localStorage.setItem('puantaj_son_firma_v2', company);
-        alert('Tüm puantaj bilgileri başarıyla kaydedildi!');
+        localStorage.setItem('puantaj_verileri_v3', JSON.stringify(puantajData));
+        localStorage.setItem('puantaj_firma_listesi_v3', JSON.stringify(companyList));
+        localStorage.setItem('puantaj_ucretler_v3', JSON.stringify(ratesData));
+        localStorage.setItem('puantaj_son_firma_v3', company);
+        alert('Tüm puantaj ve kazanç bilgileri başarıyla kaydedildi!');
     });
 
     loadData();
@@ -468,4 +586,3 @@
 
 </body>
 </html>
-
