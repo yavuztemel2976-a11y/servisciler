@@ -317,6 +317,10 @@
             <span class="summary-label">Tek Fiyat:</span>
             <span class="summary-val" id="tekFiyatVal">0 ₺</span>
         </div>
+        <div class="summary-row">
+            <span class="summary-label">Toplam Gider:</span>
+            <span class="summary-val" id="totalGiderVal">0 ₺</span>
+        </div>
         <div class="summary-row total-row">
             <span class="summary-label">Toplam Hak Ediş:</span>
             <span class="summary-val" id="netEarningsVal">0 ₺</span>
@@ -344,6 +348,7 @@
     const calendarGrid = document.getElementById('calendarGrid');
     const totalSeferCount = document.getElementById('totalSeferCount');
     const tekFiyatVal = document.getElementById('tekFiyatVal');
+    const totalGiderVal = document.getElementById('totalGiderVal');
     const netEarningsVal = document.getElementById('netEarningsVal');
 
     const now = new Date();
@@ -351,19 +356,19 @@
 
     function loadData() {
         try {
-            const saved = localStorage.getItem('puantaj_verileri_v17');
+            const saved = localStorage.getItem('puantaj_verileri_v18');
             if (saved) puantajData = JSON.parse(saved);
             
-            const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v17');
+            const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v18');
             if (savedCompanies) companyList = JSON.parse(savedCompanies);
 
-            const savedFinance = localStorage.getItem('puantaj_finans_v17');
+            const savedFinance = localStorage.getItem('puantaj_finans_v18');
             if (savedFinance) financeData = JSON.parse(savedFinance);
         } catch(e) {}
 
         updateCompanyDropdown();
 
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v17');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v18');
         if (savedCompany && companyList.includes(savedCompany)) {
             companySelect.value = savedCompany;
         }
@@ -405,7 +410,7 @@
             deduction: deductionInput.value,
             fuel: fuelDeductionInput.value
         };
-        localStorage.setItem('puantaj_finans_v17', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_finans_v18', JSON.stringify(financeData));
     }
 
     btnAddCompany.addEventListener('click', () => {
@@ -414,10 +419,10 @@
             const formatted = newComp.trim();
             if (!companyList.includes(formatted)) {
                 companyList.push(formatted);
-                localStorage.setItem('puantaj_firma_listesi_v17', JSON.stringify(companyList));
+                localStorage.setItem('puantaj_firma_listesi_v18', JSON.stringify(companyList));
             }
             updateCompanyDropdown(formatted);
-            localStorage.setItem('puantaj_son_firma_v17', formatted);
+            localStorage.setItem('puantaj_son_firma_v18', formatted);
             updateFinanceInputs();
             renderCalendar();
         }
@@ -506,7 +511,7 @@
                     delete puantajData[key];
                 }
 
-                localStorage.setItem('puantaj_verileri_v17', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v18', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -517,7 +522,7 @@
                 } else {
                     delete puantajData[key];
                 }
-                localStorage.setItem('puantaj_verileri_v17', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v18', JSON.stringify(puantajData));
                 
                 let newTotal = 0;
                 for (let d = 1; d <= totalDays; d++) {
@@ -545,14 +550,20 @@
             gross += gross * ((parseFloat(kdvRateInput.value) || 0) / 100);
         }
 
-        let net = gross - (parseFloat(deductionInput.value) || 0) - (parseFloat(fuelDeductionInput.value) || 0);
+        const kesinti = parseFloat(deductionInput.value) || 0;
+        const yakit = parseFloat(fuelDeductionInput.value) || 0;
+        const totalGider = kesinti + yakit;
+
+        totalGiderVal.innerText = totalGider.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ₺';
+
+        let net = gross - totalGider;
         if (net < 0) net = 0;
 
         netEarningsVal.innerText = net.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ₺';
     }
 
     companySelect.addEventListener('change', () => {
-        localStorage.setItem('puantaj_son_firma_v17', companySelect.value);
+        localStorage.setItem('puantaj_son_firma_v18', companySelect.value);
         updateFinanceInputs();
         renderCalendar();
     });
