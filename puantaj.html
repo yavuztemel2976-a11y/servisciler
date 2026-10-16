@@ -250,7 +250,6 @@
             color: #15803d;
         }
 
-        /* Toplam Hak Ediş için Özel Canlı Renk Vurgusu */
         .summary-row.total-row {
             background: #dcfce7;
             border: 1.5px solid #22c55e;
@@ -316,7 +315,7 @@
     <div class="bottom-summary-card">
         <div class="summary-row">
             <span class="summary-label">Toplam Tek:</span>
-            <span class="summary-val"><span id="totalSeferCount">0</span> Sefer</span>
+            <span class="summary-val" id="totalSeferCount">0</span>
         </div>
         <div class="summary-row">
             <span class="summary-label">Tek Fiyat:</span>
@@ -361,19 +360,19 @@
 
     function loadData() {
         try {
-            const saved = localStorage.getItem('puantaj_verileri_v19');
+            const saved = localStorage.getItem('puantaj_verileri_v18');
             if (saved) puantajData = JSON.parse(saved);
             
-            const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v19');
+            const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v18');
             if (savedCompanies) companyList = JSON.parse(savedCompanies);
 
-            const savedFinance = localStorage.getItem('puantaj_finans_v19');
+            const savedFinance = localStorage.getItem('puantaj_finans_v18');
             if (savedFinance) financeData = JSON.parse(savedFinance);
         } catch(e) {}
 
         updateCompanyDropdown();
 
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v19');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v18');
         if (savedCompany && companyList.includes(savedCompany)) {
             companySelect.value = savedCompany;
         }
@@ -415,7 +414,7 @@
             deduction: deductionInput.value,
             fuel: fuelDeductionInput.value
         };
-        localStorage.setItem('puantaj_finans_v19', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_finans_v18', JSON.stringify(financeData));
     }
 
     btnAddCompany.addEventListener('click', () => {
@@ -424,10 +423,10 @@
             const formatted = newComp.trim();
             if (!companyList.includes(formatted)) {
                 companyList.push(formatted);
-                localStorage.setItem('puantaj_firma_listesi_v19', JSON.stringify(companyList));
+                localStorage.setItem('puantaj_firma_listesi_v18', JSON.stringify(companyList));
             }
             updateCompanyDropdown(formatted);
-            localStorage.setItem('puantaj_son_firma_v19', formatted);
+            localStorage.setItem('puantaj_son_firma_v18', formatted);
             updateFinanceInputs();
             renderCalendar();
         }
@@ -516,7 +515,7 @@
                     delete puantajData[key];
                 }
 
-                localStorage.setItem('puantaj_verileri_v19', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v18', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -527,7 +526,7 @@
                 } else {
                     delete puantajData[key];
                 }
-                localStorage.setItem('puantaj_verileri_v19', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v18', JSON.stringify(puantajData));
                 
                 let newTotal = 0;
                 for (let d = 1; d <= totalDays; d++) {
@@ -538,7 +537,6 @@
                 calculateFinance(newTotal);
             });
 
-            calendarGrid.appendChild(calendarGrid.appendChild ? cell : cell); // fix append
             calendarGrid.appendChild(cell);
         }
 
@@ -569,7 +567,7 @@
     }
 
     companySelect.addEventListener('change', () => {
-        localStorage.setItem('puantaj_son_firma_v19', companySelect.value);
+        localStorage.setItem('puantaj_son_firma_v18', companySelect.value);
         updateFinanceInputs();
         renderCalendar();
     });
