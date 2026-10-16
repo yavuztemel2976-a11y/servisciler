@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aylık Puantaj</title>
+    <title>Aylık Puantaj ve Sefer Takibi</title>
     <style>
         :root {
             --primary: #2563eb;
-            --bg-color: #f8fafc;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
@@ -19,7 +19,7 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 6px;
+            padding: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -29,80 +29,104 @@
 
         .container {
             width: 100%;
-            max-width: 420px;
+            max-width: 450px;
             background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            padding: 10px;
+            border-radius: 16px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            padding: 14px;
             box-sizing: border-box;
         }
 
         h2 {
-            font-size: 1rem;
-            margin: 0 0 4px 0;
+            font-size: 1.15rem;
+            margin: 0 0 8px 0;
             text-align: center;
             color: #0f172a;
+            font-weight: 800;
         }
 
         .top-row {
             display: flex;
             gap: 6px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
-        .top-row input {
-            padding: 6px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.85rem;
-            background: #fff;
-            box-sizing: border-box;
-        }
-
-        .company-input {
+        .company-box {
             flex: 1;
+            display: flex;
+            gap: 4px;
+        }
+
+        .company-box select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: #fff;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background: #e2e8f0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--primary);
+            white-space: nowrap;
         }
 
         .month-box {
-            width: 110px;
+            width: 125px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            background: #fff;
+            font-weight: 600;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-            margin-bottom: 6px;
+            grid-template-columns: 1fr;
+            margin-bottom: 8px;
         }
 
         .stat-card {
-            background: #f1f5f9;
-            border-radius: 6px;
-            padding: 4px;
-            text-align: center;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .stat-label {
-            font-size: 0.6rem;
-            color: var(--text-muted);
+            font-size: 0.75rem;
+            color: #1e40af;
             text-transform: uppercase;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .stat-value {
-            font-size: 0.95rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 800;
             color: var(--primary);
         }
 
         .finance-card {
             background: #f8fafc;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 6px 8px;
-            margin-bottom: 6px;
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 6px;
+            gap: 8px;
         }
 
         .finance-item {
@@ -112,7 +136,7 @@
         }
 
         .finance-item label {
-            font-size: 0.65rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
             font-weight: 700;
             text-transform: uppercase;
@@ -120,12 +144,13 @@
 
         .finance-item input {
             width: 100%;
-            padding: 4px 6px;
-            font-size: 0.8rem;
+            padding: 6px 8px;
+            font-size: 0.9rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px;
             background: #fff;
             box-sizing: border-box;
+            font-weight: 600;
         }
 
         .finance-item input[type="number"] {
@@ -135,29 +160,29 @@
         .kdv-box-inline {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
         .kdv-box-inline input[type="checkbox"] {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             accent-color: var(--primary);
             cursor: pointer;
             margin: 0;
         }
 
         .kdv-box-inline input[type="number"] {
-            width: 40px !important;
+            width: 50px !important;
             text-align: center !important;
-            padding: 3px !important;
+            padding: 5px !important;
         }
 
         .net-box {
             grid-column: span 2;
             background: #ecfdf5;
             border: 1px solid #a7f3d0;
-            border-radius: 6px;
-            padding: 4px 8px;
+            border-radius: 8px;
+            padding: 6px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -165,14 +190,14 @@
         }
 
         .net-label {
-            font-size: 0.65rem;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-weight: 800;
             color: #065f46;
             text-transform: uppercase;
         }
 
         .net-value {
-            font-size: 0.95rem;
+            font-size: 1.15rem;
             font-weight: 800;
             color: #059669;
         }
@@ -180,15 +205,15 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 3px;
-            margin-bottom: 6px;
+            gap: 4px;
         }
 
         .day-header {
             text-align: center;
-            font-size: 0.65rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             color: var(--text-muted);
+            padding-bottom: 2px;
         }
 
         .day-header.weekend {
@@ -198,14 +223,15 @@
         .day-cell {
             background: #ffffff;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            aspect-ratio: 1.2;
+            border-radius: 6px;
+            aspect-ratio: 1.05;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             user-select: none;
+            position: relative;
         }
 
         .day-cell.weekend-cell {
@@ -214,98 +240,64 @@
         }
 
         .day-number {
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 700;
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            color: var(--text-muted);
         }
 
         .weekend-cell .day-number {
             color: #e11d48;
         }
 
-        .day-status {
-            font-size: 0.55rem;
-            margin-top: 1px;
-            color: var(--text-muted);
+        .day-status-input {
+            width: 85%;
+            height: 50%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-top: 10px;
+            color: var(--primary);
+            outline: none;
         }
 
-        .day-cell.status-work {
+        .day-cell.active-sefer {
             background-color: #dcfce7 !important;
             border-color: #22c55e !important;
         }
-        .day-cell.status-work .day-number,
-        .day-cell.status-work .day-status {
+
+        .day-cell.active-sefer .day-status-input {
             color: #15803d !important;
-            font-weight: 700;
-        }
-
-        .day-cell.status-leave {
-            background-color: #fee2e2 !important;
-            border-color: #ef4444 !important;
-        }
-        .day-cell.status-leave .day-number,
-        .day-cell.status-leave .day-status {
-            color: #b91c1c !important;
-            font-weight: 700;
-        }
-
-        .day-cell.status-report {
-            background-color: #fef9c3 !important;
-            border-color: #eab308 !important;
-        }
-        .day-cell.status-report .day-number,
-        .day-cell.status-report .day-status {
-            color: #a16207 !important;
-            font-weight: 700;
-        }
-
-        .legend {
-            display: flex;
-            justify-content: space-around;
-            font-size: 0.65rem;
-            color: var(--text-muted);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .legend-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Aylık Puantaj</h2>
+    <h2>Aylık Puantaj & Sefer Takibi</h2>
 
     <div class="top-row">
-        <input type="text" id="companyInput" class="company-input" placeholder="Firma Adı Yazın...">
+        <div class="company-box">
+            <select id="companySelect"></select>
+            <button type="button" class="btn-add" id="btnAddCompany">+ Yeni Firma</button>
+        </div>
         <input type="month" id="monthSelect" class="month-box">
     </div>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-label">Çalışılan</div>
-            <div class="stat-value" id="countWork">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Tatil</div>
-            <div class="stat-value" id="countLeave">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Rapor</div>
-            <div class="stat-value" id="countReport">0</div>
+            <div class="stat-label">Bu Ayki Toplam Sefer Sayısı:</div>
+            <div class="stat-value"><span id="totalSeferCount">0</span> Sefer</div>
         </div>
     </div>
 
     <div class="finance-card">
         <div class="finance-item">
-            <label>Günlük Ciro</label>
+            <label>Sefer Başı Ciro (₺)</label>
             <input type="number" id="dailyRateInput" placeholder="0" min="0" step="any">
         </div>
 
@@ -314,43 +306,45 @@
             <div class="kdv-box-inline">
                 <input type="checkbox" id="kdvCheck" checked>
                 <input type="number" id="kdvRateInput" value="10" min="0" max="100">
-                <span style="font-size:0.75rem; font-weight:700;">%</span>
+                <span style="font-size:0.8rem; font-weight:700;">%</span>
             </div>
         </div>
 
         <div class="finance-item">
-            <label>Kesinti</label>
+            <label>Kesinti (₺)</label>
             <input type="number" id="deductionInput" placeholder="0" min="0" step="any">
         </div>
 
         <div class="finance-item">
-            <label>Yakıt</label>
+            <label>Yakıt Kesintisi (₺)</label>
             <input type="number" id="fuelDeductionInput" placeholder="0" min="0" step="any">
         </div>
 
         <div class="net-box">
-            <div class="net-label">Net Tutar</div>
+            <div class="net-label">Net Hak Ediş</div>
             <div class="net-value" id="netEarningsVal">0 ₺</div>
         </div>
     </div>
 
     <div class="calendar-grid" id="calendarGrid"></div>
-
-    <div class="legend">
-        <div class="legend-item"><span class="legend-dot" style="background: #22c55e;"></span> Çalıştı</div>
-        <div class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span> Tatil</div>
-        <div class="legend-item"><span class="legend-dot" style="background: #eab308;"></span> Raporlu</div>
-    </div>
 </div>
 
 <script>
-    const states = ['', 'work', 'leave', 'report'];
-    const stateLabels = { '': '-', 'work': 'Çalıştı', 'leave': 'Tatil', 'report': 'Rapor' };
-    
+    // İstediğiniz sıralama: '/' = 1 Sefer, '×' = 2 Sefer, '××' = 4 Sefer, '×××' = 6 Sefer
+    const seferPresets = [
+        { symbol: '', value: 0 },
+        { symbol: '/', value: 1 },    // 1 Sefer (Yarım gün / Tek tur)
+        { symbol: '×', value: 2 },    // 2 Sefer (Tam gün)
+        { symbol: '××', value: 4 },   // 4 Sefer (Çift çalışma)
+        { symbol: '×××', value: 6 }   // 6 Sefer (Yoğun çalışma)
+    ];
+
     let puantajData = {}; 
+    let companyList = ['Meva Turizm'];
     let financeData = {};
 
-    const companyInput = document.getElementById('companyInput');
+    const companySelect = document.getElementById('companySelect');
+    const btnAddCompany = document.getElementById('btnAddCompany');
     const monthSelect = document.getElementById('monthSelect');
     
     const dailyRateInput = document.getElementById('dailyRateInput');
@@ -361,34 +355,46 @@
     const netEarningsVal = document.getElementById('netEarningsVal');
 
     const calendarGrid = document.getElementById('calendarGrid');
-    const countWork = document.getElementById('countWork');
-    const countLeave = document.getElementById('countLeave');
-    const countReport = document.getElementById('countReport');
+    const totalSeferCount = document.getElementById('totalSeferCount');
 
     const now = new Date();
     monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-    function getCompanyName() {
-        return companyInput.value.trim() || 'Genel';
-    }
-
     function loadData() {
-        const saved = localStorage.getItem('puantaj_verileri_v9');
+        const saved = localStorage.getItem('puantaj_verileri_v12');
         if (saved) { try { puantajData = JSON.parse(saved); } catch(e) {} }
         
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v9');
-        if (savedCompany) {
-            companyInput.value = savedCompany;
-        }
+        const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v12');
+        if (savedCompanies) { try { companyList = JSON.parse(savedCompanies); } catch(e) {} }
 
-        const savedFinance = localStorage.getItem('puantaj_finans_v9');
+        const savedFinance = localStorage.getItem('puantaj_finans_v12');
         if (savedFinance) { try { financeData = JSON.parse(savedFinance); } catch(e) {} }
+
+        updateCompanyDropdown();
+
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v12');
+        if (savedCompany && companyList.includes(savedCompany)) {
+            companySelect.value = savedCompany;
+        }
 
         updateFinanceInputs();
     }
 
+    function updateCompanyDropdown(selectedVal = '') {
+        const current = selectedVal || companySelect.value || companyList[0];
+        companySelect.innerHTML = '';
+        companyList.forEach(comp => {
+            const opt = document.createElement('option');
+            opt.value = comp;
+            opt.textContent = comp;
+            companySelect.appendChild(opt);
+        });
+        if (companyList.includes(current)) companySelect.value = current;
+    }
+
     function getFinanceKey() {
-        return `${monthSelect.value}_${getCompanyName()}`;
+        const comp = companySelect.value || companyList[0] || 'Genel';
+        return `${monthSelect.value}_${comp}`;
     }
 
     function updateFinanceInputs() {
@@ -408,7 +414,38 @@
             deduction: deductionInput.value,
             fuel: fuelDeductionInput.value
         };
-        localStorage.setItem('puantaj_finans_v9', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_finans_v12', JSON.stringify(financeData));
+    }
+
+    btnAddCompany.addEventListener('click', () => {
+        const newComp = prompt('Yeni Firma Adı Girin:');
+        if (newComp && newComp.trim() !== '') {
+            const formatted = newComp.trim();
+            if (!companyList.includes(formatted)) {
+                companyList.push(formatted);
+                localStorage.setItem('puantaj_firma_listesi_v12', JSON.stringify(companyList));
+            }
+            updateCompanyDropdown(formatted);
+            localStorage.setItem('puantaj_son_firma_v12', formatted);
+            updateFinanceInputs();
+            renderCalendar();
+        }
+    });
+
+    function parseSeferValue(valStr) {
+        if (!valStr) return 0;
+        const str = String(valStr).trim();
+        
+        if (!isNaN(parseFloat(str)) && isFinite(str)) {
+            return parseFloat(str);
+        }
+        
+        if (str === '/') return 1;
+        if (str === '×' || str === 'x' || str === 'X') return 2;
+        if (str === '××' || str === 'xx' || str === 'XX') return 4;
+        if (str === '×××' || str === 'xxx' || str === 'XXX') return 6;
+
+        return 0;
     }
 
     function renderCalendar() {
@@ -426,9 +463,9 @@
 
         const firstDayIndex = (new Date(year, month - 1, 1).getDay() + 6) % 7;
         const totalDays = new Date(year, month, 0).getDate();
-        const company = getCompanyName();
+        const company = companySelect.value || 'Genel';
 
-        let counts = { work: 0, leave: 0, report: 0 };
+        let totalSefer = 0;
 
         for (let i = 0; i < firstDayIndex; i++) {
             const emptyDiv = document.createElement('div');
@@ -442,33 +479,68 @@
             if (isWeekend) cell.classList.add('weekend-cell');
             
             const key = `${monthSelect.value}_${company}_${day}`;
-            const currentState = puantajData[key] || '';
+            const currentVal = puantajData[key] || '';
 
-            if (currentState) {
-                cell.classList.add(`status-${currentState}`);
-                if(counts[currentState] !== undefined) counts[currentState]++;
+            const daySeferCount = parseSeferValue(currentVal);
+            totalSefer += daySeferCount;
+
+            if (daySeferCount > 0) {
+                cell.classList.add('active-sefer');
             }
 
-            cell.innerHTML = `<div class="day-number">${day}</div><div class="day-status">${stateLabels[currentState]}</div>`;
+            cell.innerHTML = `
+                <div class="day-number">${day}</div>
+                <input type="text" class="day-status-input" value="${currentVal}" placeholder="-" data-key="${key}">
+            `;
 
-            cell.addEventListener('click', () => {
-                let nextState = states[(states.indexOf(puantajData[key] || '') + 1) % states.length];
-                if (nextState) puantajData[key] = nextState;
-                else delete puantajData[key];
+            const inputElem = cell.querySelector('.day-status-input');
+
+            cell.addEventListener('click', (e) => {
+                if (e.target === inputElem) return;
                 
-                localStorage.setItem('puantaj_verileri_v9', JSON.stringify(puantajData));
+                let currentStr = puantajData[key] || '';
+                let currentIndex = seferPresets.findIndex(p => p.symbol === currentStr);
+                let nextIndex = (currentIndex + 1) % seferPresets.length;
+                let nextSymbol = seferPresets[nextIndex].symbol;
+
+                if (nextSymbol) {
+                    puantajData[key] = nextSymbol;
+                } else {
+                    delete puantajData[key];
+                }
+
+                localStorage.setItem('puantaj_verileri_v12', JSON.stringify(puantajData));
                 renderCalendar();
+            });
+
+            inputElem.addEventListener('input', (e) => {
+                const val = e.target.value.trim();
+                if (val) {
+                    puantajData[key] = val;
+                } else {
+                    delete puantajData[key];
+                }
+                localStorage.setItem('puantaj_verileri_v12', JSON.stringify(puantajData));
+                
+                let newTotal = 0;
+                for (let d = 1; d <= totalDays; d++) {
+                    const k = `${monthSelect.value}_${company}_${d}`;
+                    newTotal += parseSeferValue(puantajData[k]);
+                }
+                totalSeferCount.innerText = newTotal;
+                calculateFinance(newTotal);
             });
 
             calendarGrid.appendChild(cell);
         }
 
-        countWork.innerText = counts.work;
-        countLeave.innerText = counts.leave;
-        countReport.innerText = counts.report;
+        totalSeferCount.innerText = totalSefer;
+        calculateFinance(totalSefer);
+    }
 
-        const dailyRate = parseFloat(dailyRateInput.value) || 0;
-        let gross = counts.work * dailyRate;
+    function calculateFinance(seferCount) {
+        const ratePerSefer = parseFloat(dailyRateInput.value) || 0;
+        let gross = seferCount * ratePerSefer;
 
         if (kdvCheck.checked) {
             gross += gross * ((parseFloat(kdvRateInput.value) || 0) / 100);
@@ -480,8 +552,8 @@
         netEarningsVal.innerText = net.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ₺';
     }
 
-    companyInput.addEventListener('input', () => {
-        localStorage.setItem('puantaj_son_firma_v9', companyInput.value);
+    companySelect.addEventListener('change', () => {
+        localStorage.setItem('puantaj_son_firma_v12', companySelect.value);
         updateFinanceInputs();
         renderCalendar();
     });
