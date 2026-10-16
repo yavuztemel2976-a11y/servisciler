@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aylık Puantaj ve Sefer Takibi</title>
+    <title>Aylık Puantaj</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -38,8 +38,8 @@
         }
 
         h2 {
-            font-size: 1.15rem;
-            margin: 0 0 8px 0;
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
             text-align: center;
             color: #0f172a;
             font-weight: 800;
@@ -87,35 +87,6 @@
             font-size: 0.85rem;
             background: #fff;
             font-weight: 600;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            margin-bottom: 8px;
-        }
-
-        .stat-card {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            padding: 6px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: #1e40af;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
-
-        .stat-value {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--primary);
         }
 
         .finance-card {
@@ -177,35 +148,11 @@
             padding: 5px !important;
         }
 
-        .net-box {
-            grid-column: span 2;
-            background: #ecfdf5;
-            border: 1px solid #a7f3d0;
-            border-radius: 8px;
-            padding: 6px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 2px;
-        }
-
-        .net-label {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: #065f46;
-            text-transform: uppercase;
-        }
-
-        .net-value {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: #059669;
-        }
-
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
+            margin-bottom: 10px;
         }
 
         .day-header {
@@ -273,12 +220,57 @@
         .day-cell.active-sefer .day-status-input {
             color: #15803d !important;
         }
+
+        /* Sade Alt Özet Kartı */
+        .bottom-summary-card {
+            background: #f0fdf4;
+            border: 1.5px solid #86efac;
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #166534;
+        }
+
+        .summary-val {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #15803d;
+        }
+
+        .summary-row.total-row {
+            border-top: 1px solid #bbf7d0;
+            padding-top: 4px;
+            margin-top: 2px;
+        }
+
+        .summary-row.total-row .summary-label {
+            font-size: 0.95rem;
+            color: #065f46;
+        }
+
+        .summary-row.total-row .summary-val {
+            font-size: 1.2rem;
+            color: #047857;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Aylık Puantaj ve Sefer Takibi</h2>
+    <h2>Aylık Puantaj</h2>
 
     <div class="top-row">
         <div class="company-box">
@@ -288,16 +280,9 @@
         <input type="month" id="monthSelect" class="month-box">
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">Bu Ayki Toplam Sefer Sayısı:</div>
-            <div class="stat-value"><span id="totalSeferCount">0</span> Sefer</div>
-        </div>
-    </div>
-
     <div class="finance-card">
         <div class="finance-item">
-            <label>Sefer Başı Ciro (₺)</label>
+            <label>Tek Fiyat (₺)</label>
             <input type="number" id="dailyRateInput" placeholder="0" min="0" step="any">
         </div>
 
@@ -316,25 +301,34 @@
         </div>
 
         <div class="finance-item">
-            <label>Yakıt Kesintisi (₺)</label>
+            <label>Yakıt (₺)</label>
             <input type="number" id="fuelDeductionInput" placeholder="0" min="0" step="any">
-        </div>
-
-        <div class="net-box">
-            <div class="net-label">Net Hak Ediş</div>
-            <div class="net-value" id="netEarningsVal">0 ₺</div>
         </div>
     </div>
 
     <div class="calendar-grid" id="calendarGrid"></div>
+
+    <div class="bottom-summary-card">
+        <div class="summary-row">
+            <span class="summary-label">Toplam Tek:</span>
+            <span class="summary-val"><span id="totalSeferCount">0</span> Sefer</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Tek Fiyat:</span>
+            <span class="summary-val" id="tekFiyatVal">0 ₺</span>
+        </div>
+        <div class="summary-row total-row">
+            <span class="summary-label">Toplam Hak Ediş:</span>
+            <span class="summary-val" id="netEarningsVal">0 ₺</span>
+        </div>
+    </div>
 </div>
 
 <script>
-    // Tıklama sırası presets
     const seferPresets = ['', '/', '×', '×/', '××', '××/', '×××'];
 
     let puantajData = {}; 
-    let companyList = ['Meva Turizm'];
+    let companyList = ['Alber turizm'];
     let financeData = {};
 
     const companySelect = document.getElementById('companySelect');
@@ -346,29 +340,30 @@
     const kdvRateInput = document.getElementById('kdvRateInput');
     const deductionInput = document.getElementById('deductionInput');
     const fuelDeductionInput = document.getElementById('fuelDeductionInput');
-    const netEarningsVal = document.getElementById('netEarningsVal');
-
+    
     const calendarGrid = document.getElementById('calendarGrid');
     const totalSeferCount = document.getElementById('totalSeferCount');
+    const tekFiyatVal = document.getElementById('tekFiyatVal');
+    const netEarningsVal = document.getElementById('netEarningsVal');
 
     const now = new Date();
     monthSelect.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
     function loadData() {
         try {
-            const saved = localStorage.getItem('puantaj_verileri_v15');
+            const saved = localStorage.getItem('puantaj_verileri_v17');
             if (saved) puantajData = JSON.parse(saved);
             
-            const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v15');
+            const savedCompanies = localStorage.getItem('puantaj_firma_listesi_v17');
             if (savedCompanies) companyList = JSON.parse(savedCompanies);
 
-            const savedFinance = localStorage.getItem('puantaj_finans_v15');
+            const savedFinance = localStorage.getItem('puantaj_finans_v17');
             if (savedFinance) financeData = JSON.parse(savedFinance);
         } catch(e) {}
 
         updateCompanyDropdown();
 
-        const savedCompany = localStorage.getItem('puantaj_son_firma_v15');
+        const savedCompany = localStorage.getItem('puantaj_son_firma_v17');
         if (savedCompany && companyList.includes(savedCompany)) {
             companySelect.value = savedCompany;
         }
@@ -410,7 +405,7 @@
             deduction: deductionInput.value,
             fuel: fuelDeductionInput.value
         };
-        localStorage.setItem('puantaj_finans_v15', JSON.stringify(financeData));
+        localStorage.setItem('puantaj_finans_v17', JSON.stringify(financeData));
     }
 
     btnAddCompany.addEventListener('click', () => {
@@ -419,16 +414,15 @@
             const formatted = newComp.trim();
             if (!companyList.includes(formatted)) {
                 companyList.push(formatted);
-                localStorage.setItem('puantaj_firma_listesi_v15', JSON.stringify(companyList));
+                localStorage.setItem('puantaj_firma_listesi_v17', JSON.stringify(companyList));
             }
             updateCompanyDropdown(formatted);
-            localStorage.setItem('puantaj_son_firma_v15', formatted);
+            localStorage.setItem('puantaj_son_firma_v17', formatted);
             updateFinanceInputs();
             renderCalendar();
         }
     });
 
-    // Sefer değerini hesaplayan sağlam fonksiyon
     function parseSeferValue(valStr) {
         if (!valStr) return 0;
         const str = String(valStr).trim();
@@ -512,7 +506,7 @@
                     delete puantajData[key];
                 }
 
-                localStorage.setItem('puantaj_verileri_v15', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v17', JSON.stringify(puantajData));
                 renderCalendar();
             });
 
@@ -523,7 +517,7 @@
                 } else {
                     delete puantajData[key];
                 }
-                localStorage.setItem('puantaj_verileri_v15', JSON.stringify(puantajData));
+                localStorage.setItem('puantaj_verileri_v17', JSON.stringify(puantajData));
                 
                 let newTotal = 0;
                 for (let d = 1; d <= totalDays; d++) {
@@ -543,6 +537,8 @@
 
     function calculateFinance(seferCount) {
         const ratePerSefer = parseFloat(dailyRateInput.value) || 0;
+        tekFiyatVal.innerText = ratePerSefer.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + ' ₺';
+
         let gross = seferCount * ratePerSefer;
 
         if (kdvCheck.checked) {
@@ -556,7 +552,7 @@
     }
 
     companySelect.addEventListener('change', () => {
-        localStorage.setItem('puantaj_son_firma_v15', companySelect.value);
+        localStorage.setItem('puantaj_son_firma_v17', companySelect.value);
         updateFinanceInputs();
         renderCalendar();
     });
