@@ -7,94 +7,116 @@
     <style>
         :root {
             --primary: #2563eb;
-            --bg-color: #f1f5f9;
+            --primary-dark: #1d4ed8;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #475569;
-            --border-color: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --emerald-bg: #ecfdf5;
+            --emerald-border: #10b981;
+            --emerald-text: #047857;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
             color: var(--text-main);
             margin: 0;
-            padding: 4px;
+            padding: 6px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             width: 100%;
             max-width: 470px;
             background: var(--card-bg);
-            border-radius: 14px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+            padding: 12px;
             box-sizing: border-box;
         }
 
-        h2 {
-            font-size: 1.35rem;
-            margin: 0 0 8px 0;
+        .app-header {
+            margin: 0 0 10px 0;
             text-align: center;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin: 0;
             color: #0f172a;
             font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
         .top-row {
             display: flex;
             gap: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .company-box {
             flex: 1;
             display: flex;
-            gap: 4px;
+            gap: 6px;
         }
 
         .company-box select {
             flex: 1;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            background: #fff;
+            padding: 9px 10px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: #ffffff;
             font-weight: 700;
+            color: #1e293b;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            outline: none;
         }
 
         .btn-add {
-            background: #e2e8f0;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0 10px;
+            background: #eff6ff;
+            border: 1.5px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 0 12px;
             font-size: 0.85rem;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             color: var(--primary);
             white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-add:active {
+            transform: scale(0.96);
+            background: #dbeafe;
         }
 
         .month-box {
             width: 135px;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            background: #fff;
+            padding: 9px 8px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background: #ffffff;
             font-weight: 700;
+            color: #1e293b;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            outline: none;
         }
 
         .finance-card {
             background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 8px;
-            margin-bottom: 8px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 10px;
+            margin-bottom: 10px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
@@ -103,25 +125,33 @@
         .finance-item {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
         }
 
         .finance-item label {
-            font-size: 0.72rem;
-            color: var(--text-muted);
+            font-size: 0.7rem;
+            color: #64748b;
             font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
         .finance-item input {
             width: 100%;
-            padding: 7px 8px;
+            padding: 8px 10px;
             font-size: 1.05rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: #fff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            background: #ffffff;
             box-sizing: border-box;
-            font-weight: 700;
+            font-weight: 800;
+            color: #0f172a;
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .finance-item input:focus {
+            border-color: var(--primary);
         }
 
         .finance-item input[type="number"] {
@@ -135,42 +165,43 @@
         }
 
         .kdv-box-inline input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             accent-color: var(--primary);
             cursor: pointer;
             margin: 0;
+            border-radius: 6px;
         }
 
         .kdv-box-inline input[type="number"] {
             width: 55px !important;
             text-align: center !important;
-            padding: 6px !important;
+            padding: 7px 4px !important;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            margin-bottom: 8px;
+            gap: 5px;
+            margin-bottom: 10px;
         }
 
         .day-header {
             text-align: center;
             font-size: 0.8rem;
             font-weight: 800;
-            color: var(--text-muted);
-            padding-bottom: 2px;
+            color: #64748b;
+            padding-bottom: 3px;
         }
 
         .day-header.weekend {
-            color: #dc2626;
+            color: #e11d48;
         }
 
         .day-cell {
             background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
             aspect-ratio: 1.0;
             display: flex;
             flex-direction: column;
@@ -179,6 +210,11 @@
             cursor: pointer;
             user-select: none;
             position: relative;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .day-cell:active {
+            transform: scale(0.95);
         }
 
         .day-cell.weekend-cell {
@@ -187,16 +223,16 @@
         }
 
         .day-number {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 800;
             position: absolute;
-            top: 2px;
-            left: 4px;
-            color: var(--text-muted);
+            top: 3px;
+            left: 5px;
+            color: #94a3b8;
         }
 
         .weekend-cell .day-number {
-            color: #e11d48;
+            color: #f43f5e;
         }
 
         .day-status-input {
@@ -205,16 +241,17 @@
             border: none;
             background: transparent;
             text-align: center;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 900;
-            margin-top: 10px;
+            margin-top: 8px;
             color: var(--primary);
             outline: none;
         }
 
         .day-cell.active-sefer {
             background-color: #dcfce7 !important;
-            border-color: #22c55e !important;
+            border: 2px solid #22c55e !important;
+            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.15);
         }
 
         .day-cell.active-sefer .day-status-input {
@@ -223,12 +260,13 @@
 
         .bottom-summary-card {
             background: #f0fdf4;
-            border: 2px solid #4ade80;
-            border-radius: 10px;
-            padding: 10px 12px;
+            border: 2px solid #86efac;
+            border-radius: 14px;
+            padding: 10px 14px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 7px;
+            box-shadow: 0 4px 12px rgba(22, 101, 52, 0.05);
         }
 
         .summary-row {
@@ -244,36 +282,40 @@
         }
 
         .summary-val {
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: #15803d;
         }
 
         .summary-row.total-row {
-            background: #dcfce7;
-            border: 1.5px solid #22c55e;
-            border-radius: 8px;
-            padding: 6px 10px;
-            margin-top: 2px;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-top: 3px;
+            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.25);
         }
 
         .summary-row.total-row .summary-label {
             font-size: 1.05rem;
-            color: #065f46;
+            color: #ffffff;
             font-weight: 900;
+            letter-spacing: 0.01em;
         }
 
         .summary-row.total-row .summary-val {
-            font-size: 1.35rem;
-            color: #047857;
+            font-size: 1.4rem;
+            color: #ffffff;
             font-weight: 900;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.15);
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Aylık Puantaj</h2>
+    <div class="app-header">
+        <h2>Aylık Puantaj</h2>
+    </div>
 
     <div class="top-row">
         <div class="company-box">
@@ -294,7 +336,7 @@
             <div class="kdv-box-inline">
                 <input type="checkbox" id="kdvCheck" checked>
                 <input type="number" id="kdvRateInput" value="10" min="0" max="100">
-                <span style="font-size:0.9rem; font-weight:800;">%</span>
+                <span style="font-size:0.95rem; font-weight:800; color:#475569;">%</span>
             </div>
         </div>
 
