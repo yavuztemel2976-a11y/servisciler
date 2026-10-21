@@ -59,17 +59,19 @@
             display: flex;
             gap: 6px;
             margin-bottom: 10px;
+            align-items: center;
         }
 
         .company-box {
             flex: 1;
             display: flex;
-            gap: 6px;
+            gap: 4px;
+            align-items: center;
         }
 
         .company-box select {
             flex: 1;
-            padding: 9px 10px;
+            padding: 9px 8px;
             border: 1.5px solid var(--border-color);
             border-radius: 12px;
             font-size: 0.95rem;
@@ -78,32 +80,51 @@
             color: #1e293b;
             box-shadow: 0 1px 2px rgba(0,0,0,0.04);
             outline: none;
+            min-width: 0;
+        }
+
+        .btn-action {
+            border-radius: 10px;
+            padding: 8px 9px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
 
         .btn-add {
             background: #eff6ff;
-            border: 1.5px solid #bfdbfe;
-            border-radius: 12px;
-            padding: 0 12px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            cursor: pointer;
+            border-color: #bfdbfe;
             color: var(--primary);
-            white-space: nowrap;
-            transition: all 0.2s ease;
         }
 
-        .btn-add:active {
-            transform: scale(0.96);
-            background: #dbeafe;
+        .btn-edit {
+            background: #f0f9ff;
+            border-color: #bae6fd;
+            color: #0284c7;
+        }
+
+        .btn-delete {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+
+        .btn-action:active {
+            transform: scale(0.95);
         }
 
         .month-box {
-            width: 135px;
-            padding: 9px 8px;
+            width: 125px;
+            padding: 9px 6px;
             border: 1.5px solid var(--border-color);
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             background: #ffffff;
             font-weight: 700;
             color: #1e293b;
@@ -320,7 +341,9 @@
     <div class="top-row">
         <div class="company-box">
             <select id="companySelect"></select>
-            <button type="button" class="btn-add" id="btnAddCompany">+ Yeni Firma</button>
+            <button type="button" class="btn-action btn-add" id="btnAddCompany" title="Yeni Firma">+ Ekle</button>
+            <button type="button" class="btn-action btn-edit" id="btnEditCompany" title="Firmayı Düzenle">✏️</button>
+            <button type="button" class="btn-action btn-delete" id="btnDeleteCompany" title="Firmayı Sil">🗑️</button>
         </div>
         <input type="month" id="monthSelect" class="month-box">
     </div>
@@ -382,6 +405,8 @@
 
     const companySelect = document.getElementById('companySelect');
     const btnAddCompany = document.getElementById('btnAddCompany');
+    const btnEditCompany = document.getElementById('btnEditCompany');
+    const btnDeleteCompany = document.getElementById('btnDeleteCompany');
     const monthSelect = document.getElementById('monthSelect');
     
     const dailyRateInput = document.getElementById('dailyRateInput');
@@ -458,6 +483,7 @@
         localStorage.setItem('puantaj_finans_v18', JSON.stringify(financeData));
     }
 
+    // Yeni Firma Ekleme
     btnAddCompany.addEventListener('click', () => {
         const newComp = prompt('Yeni Firma Adı Girin:');
         if (newComp && newComp.trim() !== '') {
@@ -468,6 +494,81 @@
             }
             updateCompanyDropdown(formatted);
             localStorage.setItem('puantaj_son_firma_v18', formatted);
+            updateFinanceInputs();
+            renderCalendar();
+        }
+    });
+
+    // Firma Adı Düzenleme
+    btnEditCompany.addEventListener('click', () => {
+        const currentComp = companySelect.value;
+        if (!currentComp) return;
+
+        const newName = prompt(`"${currentComp}" firmasının yeni adını girin:`, currentComp);
+        if (newName && newName.trim() !== '' && newName.trim() !== currentComp) {
+            const formattedNew = newName.trim();
+            
+            const idx = companyList.indexOf(currentComp);
+            if (idx !== -1) companyList[idx] = formattedNew;
+            localStorage.setItem('puantaj_firma_listesi_v18', JSON.stringify(companyList));
+
+            Object.keys(puantajData).forEach(key => {
+                if (key.includes(`_${currentComp}_`)) {
+                    const newKey = key.replace(`_${currentComp}_`, `_${formattedNew}_`);
+                    puantajData[newKey] = puantajData[key];
+                    delete puantajData[key];
+                }
+            });
+            localStorage.setItem('puantaj_verileri_v18', JSON.stringify(puantajData));
+
+            Object.keys(financeData).forEach(key => {
+                if (key.endsWith(`_${currentComp}`)) {
+                    const newKey = key.replace(`_${currentComp}`, `_${formattedNew}`);
+                    financeData[newKey] = financeData[key];
+                    delete financeData[key];
+                }
+            });
+            localStorage.setItem('puantaj_finans_v18', JSON.stringify(financeData));
+
+            updateCompanyDropdown(formattedNew);
+            localStorage.setItem('puantaj_son_firma_v18', formattedNew);
+            updateFinanceInputs();
+            renderCalendar();
+        }
+    });
+
+    // Firma Silme
+    btnDeleteCompany.addEventListener('click', () => {
+        const currentComp = companySelect.value;
+        if (!currentComp) return;
+
+        if (companyList.length <= 1) {
+            alert('Sistemde en az bir firma kalmalıdır. Bu firmayı silemezsiniz.');
+            return;
+        }
+
+        const confirmDelete = confirm(`"${currentComp}" firmasını ve bu firmaya ait tüm verileri silmek istediğinize emin misiniz?`);
+        if (confirmDelete) {
+            companyList = companyList.filter(c => c !== currentComp);
+            localStorage.setItem('puantaj_firma_listesi_v18', JSON.stringify(companyList));
+
+            Object.keys(puantajData).forEach(key => {
+                if (key.includes(`_${currentComp}_`)) {
+                    delete puantajData[key];
+                }
+            });
+            localStorage.setItem('puantaj_verileri_v18', JSON.stringify(puantajData));
+
+            Object.keys(financeData).forEach(key => {
+                if (key.endsWith(`_${currentComp}`)) {
+                    delete financeData[key];
+                }
+            });
+            localStorage.setItem('puantaj_finans_v18', JSON.stringify(financeData));
+
+            const nextCompany = companyList[0];
+            updateCompanyDropdown(nextCompany);
+            localStorage.setItem('puantaj_son_firma_v18', nextCompany);
             updateFinanceInputs();
             renderCalendar();
         }
